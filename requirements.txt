@@ -1,2 +1,16 @@
+# Core Dependencies for MedBot Deep Learning Project
+# Phase 2: Data Exploration & Preprocessing
+
+# Document Processing & AI Integration
 langchain_community>=0.3.30
+
+# PDF Processing Engine  
 pypdf>=6.1.0
+
+# Future Dependencies (Phase 3+)
+# chromadb>=0.4.0              # Vector database for semantic search
+# openai>=1.0.0                # LLM integration
+# transformers>=4.30.0         # Hugging Face models
+# torch>=2.0.0                 # PyTorch for deep learning
+# numpy>=1.24.0                # Numerical computing
+# pandas>=2.0.0                # Data manipulation
