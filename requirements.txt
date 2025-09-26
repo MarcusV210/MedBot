@@ -1,3 +1,2 @@
-langchain_community
-pypdf
-re
+langchain_community>=0.3.30
+pypdf>=6.1.0

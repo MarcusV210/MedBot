@@ -1,7 +1,14 @@
 from langchain_community.document_loaders import PyPDFLoader #type: ignore
 import re
+import glob
+import os
 
-textbook_path = 'data/Harrisons Principles of Internal Medicine 21st Edition.pdf'
+# Find the PDF file dynamically
+pdf_files = glob.glob("data/Harrison*Medicine*.pdf")
+if not pdf_files:
+    raise FileNotFoundError("Harrison's medical textbook PDF not found in data folder")
+textbook_path = pdf_files[0]
+print(f"Found PDF: {textbook_path}")
 loader = PyPDFLoader(textbook_path)
 docs = loader.load()
 

@@ -1,0 +1,77 @@
+MEDBOT - PHASE 2: EXPLORATION & PREPROCESSING SUMMARY
+=====================================================
+
+Repository Link: https://github.com/[your-username]/MedBot
+(Replace with actual repository URL)
+
+PROJECT OVERVIEW:
+MedBot is an AI-powered study buddy designed to help students navigate through massive medical textbooks without having to manually parse through 15,000+ pages of content.
+
+CURRENT REPOSITORY STATE:
+========================
+
+FILES STRUCTURE:
+- README.md: Basic project description and installation guide (incomplete)
+- requirements.txt: Python dependencies (langchain_community, pypdf, re)
+- preprocess_and_convert_to_chroma.py: Main preprocessing script
+- data/: Contains Harrison's Principles of Internal Medicine 21st Edition PDF
+
+PREPROCESSING IMPLEMENTATION:
+============================
+
+The main preprocessing script (preprocess_and_convert_to_chroma.py) performs:
+
+1. PDF LOADING:
+   - Uses PyPDFLoader from langchain_community
+   - Loads Harrison's medical textbook (21st Edition)
+   - Extracts 13,796 useful pages (removes index and citation pages)
+
+2. DOCUMENT CLEANING:
+   - Removes empty lines
+   - Filters out page numbers
+   - Removes "Page X of Y" headers
+   - Eliminates ALL CAPS headers
+   - Removes divider lines (dashes, underscores)
+
+3. CONTENT NORMALIZATION:
+   - Fixes hyphenated words split across lines
+   - Consolidates multiple newlines into single spaces
+   - Removes excessive whitespace
+   - Strips leading/trailing whitespace
+
+TECHNICAL DETAILS:
+=================
+
+Dependencies:
+- langchain_community: For PDF document loading
+- pypdf: PDF processing backend
+- re: Regular expressions for text cleaning
+
+Data Processing:
+- Source: 15,000+ page medical textbook
+- Processed: 13,796 pages after filtering
+- Cleaning: Multi-stage text normalization pipeline
+
+GIT HISTORY:
+===========
+- Initial commit: Data ingestion, preprocessing and cleaning
+- Subsequent commits: Handling large file uploads to repository
+
+CURRENT STATUS:
+==============
+✅ PDF loading and parsing implemented
+✅ Text cleaning and preprocessing pipeline complete
+✅ Document structure preservation
+⏳ Chroma vector database conversion (mentioned in filename but not implemented)
+⏳ AI chatbot interface (not yet implemented)
+⏳ Complete installation instructions
+
+NEXT STEPS:
+==========
+1. Complete Chroma vector database conversion
+2. Implement AI query interface
+3. Add proper error handling
+4. Complete README with installation instructions
+5. Add configuration options for different textbooks
+
+This repository represents Phase 2 of the MedBot project, focusing on data exploration and preprocessing of medical textbook content for AI-powered study assistance.
