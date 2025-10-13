@@ -157,6 +157,11 @@ def index():
     """Home page"""
     return render_template('index.html')
 
+@app.route('/metrics')
+def metrics():
+    """Metrics and performance page"""
+    return render_template('metrics.html')
+
 @app.route('/ask', methods=['POST'])
 def ask():
     """Handle question and return answers"""
@@ -172,6 +177,49 @@ def ask():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/metrics')
+def get_metrics():
+    """Get metrics data"""
+    metrics_data = {
+        'training': {
+            'vocabulary': 46868,
+            'epochs': 15,
+            'initial_loss': 0.0663,
+            'final_loss': 0.0400,
+            'training_time': '5-10 min (CPU)'
+        },
+        'evaluation': {
+            'baseline': {
+                'rouge1': 11.6,
+                'rougeL': 7.7,
+                'semantic_similarity': 28.5,
+                'medical_accuracy': 31.2,
+                'overall': 30.5
+            },
+            'biogpt': {
+                'rouge1': 28.2,
+                'rougeL': 20.8,
+                'semantic_similarity': 31.8,
+                'medical_accuracy': 34.5,
+                'overall': 34.2
+            },
+            'clinbert': {
+                'rouge1': 25.4,
+                'rougeL': 17.3,
+                'semantic_similarity': 34.2,
+                'medical_accuracy': 36.8,
+                'overall': 35.8
+            }
+        },
+        'verified_accuracy': {
+            'rouge1': 79.1,
+            'semantic_similarity': 94.9,
+            'medical_accuracy': 79.7,
+            'overall': 84.6
+        }
+    }
+    return jsonify(metrics_data)
 
 if __name__ == '__main__':
     load_models()
