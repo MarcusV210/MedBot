@@ -194,6 +194,82 @@
             margin-top: 30px;
         }
 
+        .stats-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .model-card {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 2em;
@@ -218,7 +294,27 @@
 
         <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
             <a href="/" style="color: white; text-decoration: none; padding: 10px 30px; background: rgba(255,255,255,0.3); border-radius: 50px;">🏥 Chatbot</a>
-            <a href="/metrics" style="color: white; text-decoration: none; padding: 10px 30px; background: rgba(255,255,255,0.2); border-radius: 50px; transition: all 0.3s;">📊 Metrics</a>
+            <a href="/metrics" style="color: white; text-decoration: none; padding: 10px 30px; background: rgba(255,255,255,0.2); border-radius: 50px; transition: all 0.3s;">📊 Full Metrics</a>
+        </div>
+
+        <!-- Quick Stats Preview -->
+        <div class="stats-preview">
+            <div class="stat-box">
+                <div class="stat-number">84.6%</div>
+                <div class="stat-label">Overall Accuracy</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">46K+</div>
+                <div class="stat-label">Medical Terms</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">3</div>
+                <div class="stat-label">AI Models</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">&lt;1s</div>
+                <div class="stat-label">Response Time</div>
+            </div>
         </div>
 
         <div class="chat-container">
@@ -268,7 +364,7 @@
 
         <div class="footer">
             <p>MedBot Phase 3 | Trained on Harrison's Principles of Internal Medicine</p>
-            <p>Developer: Anamay | 84.6% Accuracy</p>
+            <p>Developer: Anamay | 84.6% Accuracy | <a href="/metrics" style="color: white; text-decoration: underline;">View Detailed Metrics →</a></p>
         </div>
     </div>
 
@@ -300,13 +396,20 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Display answers
-                    document.getElementById('baseline-answer').textContent = data.baseline;
-                    document.getElementById('biogpt-answer').textContent = data.biogpt;
-                    document.getElementById('clinbert-answer').textContent = data.clinbert;
-                    
+                    // Display answers with animation
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('results').style.display = 'block';
+                    
+                    // Animate each answer appearing
+                    setTimeout(() => {
+                        document.getElementById('baseline-answer').textContent = data.baseline;
+                    }, 100);
+                    setTimeout(() => {
+                        document.getElementById('biogpt-answer').textContent = data.biogpt;
+                    }, 300);
+                    setTimeout(() => {
+                        document.getElementById('clinbert-answer').textContent = data.clinbert;
+                    }, 500);
                 } else {
                     showError(data.error || 'An error occurred');
                 }
