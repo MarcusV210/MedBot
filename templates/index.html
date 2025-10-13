@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedBot - Medical AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        #questionInput {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #questionInput:focus {
+            border-color: #667eea;
+        }
+
+        #askButton {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #askButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #askButton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .model-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .model-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .model-card.baseline {
+            border-left-color: #ff6b6b;
+        }
+
+        .model-card.biogpt {
+            border-left-color: #4ecdc4;
+        }
+
+        .model-card.clinbert {
+            border-left-color: #45b7d1;
+        }
+
+        .model-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .model-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            color: white;
+        }
+
+        .baseline .model-badge {
+            background: #ff6b6b;
+        }
+
+        .biogpt .model-badge {
+            background: #4ecdc4;
+        }
+
+        .clinbert .model-badge {
+            background: #45b7d1;
+        }
+
+        .model-answer {
+            font-size: 1.05em;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            border-radius: 10px;
+            padding: 15px;
+            color: #c33;
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .input-section {
+                flex-direction: column;
+            }
+
+            #askButton {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 MedBot</h1>
+            <p>Medical AI Assistant with 3 Specialized Models</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="input-section">
+                <input 
+                    type="text" 
+                    id="questionInput" 
+                    placeholder="Ask a medical question (e.g., What causes hypertension?)"
+                    onkeypress="if(event.key === 'Enter') askQuestion()"
+                >
+                <button id="askButton" onclick="askQuestion()">Ask</button>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Consulting medical AI models...</p>
+            </div>
+
+            <div class="results" id="results">
+                <div class="model-card baseline">
+                    <div class="model-title">
+                        <span>Baseline LSTM</span>
+                        <span class="model-badge">Definition</span>
+                    </div>
+                    <div class="model-answer" id="baseline-answer"></div>
+                </div>
+
+                <div class="model-card biogpt">
+                    <div class="model-title">
+                        <span>BioGPT</span>
+                        <span class="model-badge">Etiology & Risk Factors</span>
+                    </div>
+                    <div class="model-answer" id="biogpt-answer"></div>
+                </div>
+
+                <div class="model-card clinbert">
+                    <div class="model-title">
+                        <span>Clinical-BERT</span>
+                        <span class="model-badge">Treatment</span>
+                    </div>
+                    <div class="model-answer" id="clinbert-answer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>MedBot Phase 3 | Trained on Harrison's Principles of Internal Medicine</p>
+            <p>Developer: Anamay | 84.6% Accuracy</p>
+        </div>
+    </div>
+
+    <script>
+        async function askQuestion() {
+            const input = document.getElementById('questionInput');
+            const question = input.value.trim();
+            
+            if (!question) {
+                showError('Please enter a question');
+                return;
+            }
+
+            // Show loading, hide results and error
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('askButton').disabled = true;
+
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Display answers
+                    document.getElementById('baseline-answer').textContent = data.baseline;
+                    document.getElementById('biogpt-answer').textContent = data.biogpt;
+                    document.getElementById('clinbert-answer').textContent = data.clinbert;
+                    
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('results').style.display = 'block';
+                } else {
+                    showError(data.error || 'An error occurred');
+                }
+            } catch (error) {
+                showError('Failed to connect to server: ' + error.message);
+            } finally {
+                document.getElementById('askButton').disabled = false;
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Focus input on load
+        window.onload = function() {
+            document.getElementById('questionInput').focus();
+        };
+    </script>
+</body>
+</html>

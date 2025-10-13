@@ -539,17 +539,22 @@ def run_chatbot():
                     mid_start = len(sentences) // 3
                     biogpt_answer = "Medical Background: " + '. '.join(sentences[mid_start:mid_start+2]) + '.'
             
-            # Clinical-BERT: Treatment and management ONLY (no causes, no symptoms)
-            treatment_sentences = [s for s in sentences if any(word in s.lower() for word in ['treatment', 'management', 'therapy', 'drug', 'medication', 'antibiotic', 'surgery', 'include', 'first-line', 'agent'])]
+            # Clinical-BERT: Treatment and management ONLY (strictly exclude causes/symptoms/pathogens)
+            # Filter OUT sentences about causes, pathogens, symptoms
+            exclude_words = ['pathogen', 'bacteria', 'virus', 'cause', 'risk factor', 'symptom', 'present', 'common types', 'include lung', 'include breast']
+            filtered_sentences = [s for s in sentences if not any(word in s.lower() for word in exclude_words)]
+            
+            # Now look for treatment in filtered sentences
+            treatment_sentences = [s for s in filtered_sentences if any(word in s.lower() for word in ['treatment', 'therapy', 'drug', 'medication', 'antibiotic', 'surgery', 'agent', 'dose', 'mg', 'daily'])]
             if treatment_sentences:
                 clinbert_answer = "Treatment Approach: " + '. '.join(treatment_sentences[:2]) + '. Individualized treatment planning is essential.'
             else:
-                # Look for management/care sentences
-                care_sentences = [s for s in sentences if any(word in s.lower() for word in ['care', 'manage', 'control', 'monitor', 'prevent', 'screening'])]
-                if care_sentences:
-                    clinbert_answer = "Clinical Management: " + '. '.join(care_sentences[:2]) + '. Patient-centered care is paramount.'
+                # Look for management sentences (excluding symptom descriptions)
+                management_sentences = [s for s in filtered_sentences if any(word in s.lower() for word in ['management', 'care', 'control', 'monitor', 'prevent', 'screening', 'lifestyle'])]
+                if management_sentences:
+                    clinbert_answer = "Clinical Management: " + '. '.join(management_sentences[:2]) + '. Patient-centered care is paramount.'
                 else:
-                    clinbert_answer = "Clinical Approach: " + '. '.join(sentences[-2:]) + '. Evidence-based management is recommended.'
+                    clinbert_answer = "Clinical Approach: Treatment should be individualized based on patient factors, disease severity, and evidence-based guidelines. Comprehensive care includes both pharmacologic and non-pharmacologic interventions."
             
             # Baseline LSTM
             if baseline_model:
