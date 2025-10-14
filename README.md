@@ -73,28 +73,28 @@ http://localhost:5000
 
 ## 🎯 Overview
 
-MedBot is a complete **Medical AI System** that combines deep learning with natural language processing to answer medical questions. The system features:
+MedBot is a complete **Medical AI System** that combines Retrieval-Augmented Generation (RAG) with medical transformers to answer medical questions. The system features:
 
-- ✅ **Baseline LSTM** - Trained from scratch on Harrison's medical textbook
+- ✅ **RAG System** - Retrieves context from Harrison's medical textbook using ChromaDB
 - ✅ **BioGPT** - Microsoft's medical language model (1.5B parameters)
 - ✅ **Clinical-BERT** - Clinical reasoning model (110M parameters)
-- ✅ **Interactive Chatbot** - Real-time medical Q&A with all 3 models
-- ✅ **RAG System** - Retrieval-Augmented Generation with medical knowledge base
-- ✅ **84.6% Accuracy** - Verified against expected medical answers
+- ✅ **Interactive Chatbot** - Real-time medical Q&A with RAG + 2 transformers
+- ✅ **GitHub AI Backup** - FREE models (DeepSeek R1, GPT-4o-mini, Llama 405B)
+- ✅ **Cross-Validated** - Evaluated against FAQ test cases with semantic similarity
 
 ### Key Features
 
 | Feature | Description | Status |
 |---------|-------------|--------|
-| **Training** | Baseline LSTM on 2,000 pages from Harrison's | ✅ Complete |
-| **Vocabulary** | 46,868 medical terms learned | ✅ Complete |
-| **Models** | 3 AI models (Baseline, BioGPT, Clinical-BERT) | ✅ Complete |
+| **RAG System** | ChromaDB vector database with Harrison's textbook | ✅ Complete |
+| **Knowledge Base** | Harrison's Principles of Internal Medicine content | ✅ Complete |
+| **Components** | 4 AI components (RAG, BioGPT, Clinical-BERT, GitHub AI) | ✅ Complete |
 | **Backup AI** | FREE models via GitHub (DeepSeek R1, GPT-4o-mini, Llama 405B) | ✅ Complete |
 | **Chat History** | ChatPDF-style conversation memory (last 10 chats) | ✅ Complete |
 | **Context-Aware** | Understands follow-up questions ("it", "that", "tell me more") | ✅ Complete |
-| **Evaluation** | ROUGE, Semantic Similarity, Medical Accuracy | ✅ Complete |
+| **Evaluation** | Cross-validated against FAQ test cases | ✅ Complete |
 | **Web Interface** | Flask app with real-time inference | ✅ Complete |
-| **Accuracy** | 84.6% overall (verified against FAQ) | ✅ Complete |
+| **Performance** | Semantic similarity scores vs expected answers | ✅ Complete |
 | **Cost** | 100% FREE (no API costs) | ✅ Complete |
 
 ---
