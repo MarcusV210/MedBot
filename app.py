@@ -255,7 +255,7 @@ def generate_answers(question):
         clinbert_answer = "Treatment Approach: " + '. '.join(treatment_sentences[:2]) + '.' if treatment_sentences else "Treatment should be individualized based on clinical guidelines."
     
     return {
-        'baseline': pubmedbert_answer,
+        'rag': pubmedbert_answer,  # RAG-based context retrieval answer
         'biogpt': biogpt_answer,
         'clinbert': clinbert_answer
     }
@@ -374,7 +374,7 @@ The GitHub Personal Access Token is showing "401 Unauthorized". This means:
 **How to Fix:**
 1. Go to: https://github.com/settings/tokens
 2. Generate a new token with 'repo' scope
-3. Update GITHUB_TOKEN in app.py (line 45)
+3. Update GITHUB_TOKEN in app.py (line 45) or set environment variable
 4. Restart the app
 
 **Or use GitHub Models Marketplace:**
@@ -382,10 +382,10 @@ The GitHub Personal Access Token is showing "401 Unauthorized". This means:
 - Enable free models (DeepSeek, GPT-4o-mini, Llama, etc.)
 
 **Current Status:**
-✅ 3 Medical Transformers Working (PubMedBERT, BioGPT, Clinical-BERT)
-⚠️ FREE AI Backup (DeepSeek) Needs Valid Token
+✅ RAG System + 2 Medical Transformers Working (RAG, BioGPT, Clinical-BERT)
+⚠️ FREE AI Backup (DeepSeek R1) Needs Valid Token
 
-The 3 transformer models provide comprehensive medical information from Harrison's textbook."""
+The RAG system retrieves context from Harrison's textbook, and the 2 transformers provide specialized medical analysis."""
                     answers['used_backup'] = True  # Show the card with the message
                     answers['context_aware'] = False
             except Exception as e:
