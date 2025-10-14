@@ -44,13 +44,14 @@ app = Flask(__name__)
 app.secret_key = 'medbot-secret-key-2024'  # For session management
 
 # Configure OpenRouter API (supports multiple models)
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 # FREE model options (will try in order if one fails):
 FREE_MODELS = [
-    "meta-llama/llama-3.3-70b-instruct:free",  # 70B, very capable
+    "meta-llama/llama-3.3-70b-instruct:free",  # 70B, very capable (WORKING!)
     "deepseek/deepseek-chat-v3.1:free",        # 163k context
+    "qwen/qwen3-235b-a22b:free",               # 235B params
     "meta-llama/llama-3.3-8b-instruct:free",   # Smaller but fast
     "qwen/qwen3-235b-a22b:free",               # Large model
     "google/gemini-2.0-flash-exp:free",        # Google's free tier
