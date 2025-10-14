@@ -369,17 +369,29 @@ def ask():
                     answers['used_backup'] = True
                     answers['context_aware'] = is_context_aware
                 else:
-                    print("✗ FREE AI backup returned None - API key may be invalid or models rate limited")
+                    print("✗ FREE AI backup returned None - API key invalid (401 Unauthorized)")
                     # Provide a helpful fallback message
-                    answers['gemini_backup'] = """⚠️ FREE AI Backup Unavailable
+                    answers['gemini_backup'] = """⚠️ FREE AI Backup - API Key Issue
 
-The OpenRouter API key needs to be updated. To enable FREE AI backup:
+The OpenRouter API key is showing "401 Unauthorized". This means:
 
-1. Get a FREE API key from: https://openrouter.ai/keys
-2. Update OPENROUTER_API_KEY in app.py (line 21)
-3. Restart the app
+**Option 1: Get a New FREE Key**
+1. Go to: https://openrouter.ai/keys
+2. Sign up (free)
+3. Create a new API key
+4. Update OPENROUTER_API_KEY in app.py (line 45)
+5. Restart the app
 
-The 3 base models above (BioGPT, Clinical-BERT, Baseline LSTM) provide comprehensive medical information from Harrison's textbook."""
+**Option 2: Add Credits (Optional)**
+- Some free models may require $5 minimum credit
+- Go to: https://openrouter.ai/credits
+- Add credits if needed
+
+**Current Status:**
+✅ 3 Medical Transformers Working (PubMedBERT, BioGPT, Clinical-BERT)
+⚠️ FREE AI Backup Needs Valid Key
+
+The 3 transformer models provide comprehensive medical information from Harrison's textbook."""
                     answers['used_backup'] = True  # Show the card with the message
                     answers['context_aware'] = False
             except Exception as e:
