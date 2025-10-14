@@ -43,22 +43,19 @@ warnings.filterwarnings('ignore')
 app = Flask(__name__)
 app.secret_key = 'medbot-secret-key-2024'  # For session management
 
-# Configure OpenRouter API (supports multiple models)
-OPENROUTER_API_KEY = "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"
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+# Configure GitHub Models API (FREE with GitHub account)
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "your_github_token_here")  # Get from environment or set here
+GITHUB_API_URL = "https://models.inference.ai.azure.com/chat/completions"
 
-# FREE model options (will try in order if one fails):
+# FREE model options from GitHub Models (will try in order if one fails):
 FREE_MODELS = [
-    "google/gemini-2.0-flash-exp:free",        # Google Gemini 2.0 Flash (1M context!)
-    "meta-llama/llama-3.3-70b-instruct:free",  # 70B, very capable
-    "deepseek/deepseek-chat-v3.1:free",        # 163k context
-    "qwen/qwen3-235b-a22b:free",               # 235B params
-    "meta-llama/llama-3.3-8b-instruct:free",   # Smaller but fast
-    "qwen/qwen3-235b-a22b:free",               # Large model
-    "google/gemini-2.0-flash-exp:free",        # Google's free tier
+    "deepseek-r1",                    # DeepSeek R1 (reasoning model)
+    "gpt-4o-mini",                    # GPT-4o mini
+    "meta-llama-3.1-405b-instruct",   # Llama 3.1 405B
+    "mistral-large-2411",             # Mistral Large
 ]
 
-print(f"✓ OpenRouter API configured with FREE models as backup")
+print(f"✓ GitHub Models API configured with FREE DeepSeek & other models as backup")
 
 # Global variables for models
 pubmedbert_model = None
@@ -273,13 +270,11 @@ def metrics():
     """Metrics and performance page"""
     return render_template('metrics.html')
 
-def call_openrouter(messages, temperature=0.7):
-    """Call OpenRouter API with chat history support - tries multiple FREE models"""
+def call_github_models(messages, temperature=0.7):
+    """Call GitHub Models API with chat history support - tries multiple FREE models"""
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:5000",
-        "X-Title": "MedBot"
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "Content-Type": "application/json"
     }
     
     # Try each free model until one works
@@ -292,12 +287,12 @@ def call_openrouter(messages, temperature=0.7):
                 "max_tokens": 800
             }
             
-            response = requests.post(OPENROUTER_URL, headers=headers, json=payload, timeout=30)
+            response = requests.post(GITHUB_API_URL, headers=headers, json=payload, timeout=30)
             response.raise_for_status()
             
             result = response.json()
             answer = result['choices'][0]['message']['content']
-            print(f"✓ Used model: {model}")
+            print(f"✓ Used GitHub model: {model}")
             return answer
             
         except requests.exceptions.HTTPError as e:
@@ -362,7 +357,7 @@ def ask():
                 # Add current question
                 messages.append({"role": "user", "content": question})
                 
-                backup_answer = call_openrouter(messages)
+                backup_answer = call_github_models(messages)
                 
                 if backup_answer:
                     print(f"✓ FREE AI backup successful! Length: {len(backup_answer)} chars")
@@ -372,25 +367,23 @@ def ask():
                 else:
                     print("✗ FREE AI backup returned None - API key invalid (401 Unauthorized)")
                     # Provide a helpful fallback message
-                    answers['gemini_backup'] = """⚠️ FREE AI Backup - API Key Issue
+                    answers['gemini_backup'] = """⚠️ FREE AI Backup - GitHub Token Issue
 
-The OpenRouter API key is showing "401 Unauthorized". This means:
+The GitHub Personal Access Token is showing "401 Unauthorized". This means:
 
-**Option 1: Get a New FREE Key**
-1. Go to: https://openrouter.ai/keys
-2. Sign up (free)
-3. Create a new API key
-4. Update OPENROUTER_API_KEY in app.py (line 45)
-5. Restart the app
+**How to Fix:**
+1. Go to: https://github.com/settings/tokens
+2. Generate a new token with 'repo' scope
+3. Update GITHUB_TOKEN in app.py (line 45)
+4. Restart the app
 
-**Option 2: Add Credits (Optional)**
-- Some free models may require $5 minimum credit
-- Go to: https://openrouter.ai/credits
-- Add credits if needed
+**Or use GitHub Models Marketplace:**
+- Visit: https://github.com/marketplace/models
+- Enable free models (DeepSeek, GPT-4o-mini, Llama, etc.)
 
 **Current Status:**
 ✅ 3 Medical Transformers Working (PubMedBERT, BioGPT, Clinical-BERT)
-⚠️ FREE AI Backup Needs Valid Key
+⚠️ FREE AI Backup (DeepSeek) Needs Valid Token
 
 The 3 transformer models provide comprehensive medical information from Harrison's textbook."""
                     answers['used_backup'] = True  # Show the card with the message

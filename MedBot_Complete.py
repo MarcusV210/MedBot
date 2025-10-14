@@ -539,22 +539,27 @@ def run_chatbot():
                     mid_start = len(sentences) // 3
                     biogpt_answer = "Medical Background: " + '. '.join(sentences[mid_start:mid_start+2]) + '.'
             
-            # Clinical-BERT: Treatment and management ONLY (strictly exclude causes/symptoms/pathogens)
-            # Filter OUT sentences about causes, pathogens, symptoms
-            exclude_words = ['pathogen', 'bacteria', 'virus', 'cause', 'risk factor', 'symptom', 'present', 'common types', 'include lung', 'include breast']
+            # Clinical-BERT: Treatment ONLY (strictly exclude everything except treatment)
+            # Aggressively filter OUT non-treatment sentences
+            exclude_words = ['pathogen', 'bacteria', 'virus', 'cause', 'risk factor', 'symptom', 'present', 'common types', 
+                           'include lung', 'include breast', 'characterized', 'is a', 'is an', 'are', 'defined', 
+                           'screening', 'detection', 'early', 'common', 'types include']
+            
+            # First filter out excluded sentences
             filtered_sentences = [s for s in sentences if not any(word in s.lower() for word in exclude_words)]
             
-            # Now look for treatment in filtered sentences
-            treatment_sentences = [s for s in filtered_sentences if any(word in s.lower() for word in ['treatment', 'therapy', 'drug', 'medication', 'antibiotic', 'surgery', 'agent', 'dose', 'mg', 'daily'])]
+            # Now ONLY look for explicit treatment sentences
+            treatment_keywords = ['treatment', 'therapy', 'drug', 'medication', 'antibiotic', 'surgery', 'surgical', 
+                                'chemotherapy', 'radiation', 'agent', 'dose', 'mg', 'daily', 'intravenous', 'oral',
+                                'first-line', 'second-line', 'ace inhibitor', 'beta-blocker', 'statin', 'insulin']
+            
+            treatment_sentences = [s for s in filtered_sentences if any(word in s.lower() for word in treatment_keywords)]
+            
             if treatment_sentences:
                 clinbert_answer = "Treatment Approach: " + '. '.join(treatment_sentences[:2]) + '. Individualized treatment planning is essential.'
             else:
-                # Look for management sentences (excluding symptom descriptions)
-                management_sentences = [s for s in filtered_sentences if any(word in s.lower() for word in ['management', 'care', 'control', 'monitor', 'prevent', 'screening', 'lifestyle'])]
-                if management_sentences:
-                    clinbert_answer = "Clinical Management: " + '. '.join(management_sentences[:2]) + '. Patient-centered care is paramount.'
-                else:
-                    clinbert_answer = "Clinical Approach: Treatment should be individualized based on patient factors, disease severity, and evidence-based guidelines. Comprehensive care includes both pharmacologic and non-pharmacologic interventions."
+                # If no treatment found, provide generic treatment guidance
+                clinbert_answer = "Treatment Approach: Management requires individualized treatment planning based on disease stage, patient factors, and comorbidities. Therapeutic options should be selected according to evidence-based guidelines with consideration of potential benefits and risks. Multidisciplinary care coordination is essential for optimal outcomes."
             
             # Baseline LSTM
             if baseline_model:

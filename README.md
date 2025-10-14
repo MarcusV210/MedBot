@@ -18,6 +18,17 @@
 
 ## ⚡ Quick Start (Web Interface - NEW!)
 
+### Easy Start with Scripts (Windows)
+
+```bash
+# Just double-click one of these:
+restart.bat   # Restart the app (use this after code changes)
+start.bat     # Start fresh
+stop.bat      # Stop the server
+```
+
+### Manual Start
+
 ```bash
 # 1. Install dependencies
 pip install -r requirements_web.txt
@@ -37,9 +48,10 @@ http://localhost:5000
 **Features:**
 - ✅ Chat history (last 10 conversations)
 - ✅ Context-aware responses (like ChatPDF)
-- ✅ 5 FREE backup AI models (Llama 70B, DeepSeek, etc.)
+- ✅ FREE AI backup via GitHub Models (DeepSeek R1, GPT-4o-mini, Llama 405B)
 - ✅ Beautiful modern UI
 - ✅ $0.00 cost (100% free!)
+- ✅ One-click restart scripts
 
 ---
 
@@ -77,7 +89,7 @@ MedBot is a complete **Medical AI System** that combines deep learning with natu
 | **Training** | Baseline LSTM on 2,000 pages from Harrison's | ✅ Complete |
 | **Vocabulary** | 46,868 medical terms learned | ✅ Complete |
 | **Models** | 3 AI models (Baseline, BioGPT, Clinical-BERT) | ✅ Complete |
-| **Backup AI** | 5 FREE models via OpenRouter (Llama 70B, DeepSeek, etc.) | ✅ Complete |
+| **Backup AI** | FREE models via GitHub (DeepSeek R1, GPT-4o-mini, Llama 405B) | ✅ Complete |
 | **Chat History** | ChatPDF-style conversation memory (last 10 chats) | ✅ Complete |
 | **Context-Aware** | Understands follow-up questions ("it", "that", "tell me more") | ✅ Complete |
 | **Evaluation** | ROUGE, Semantic Similarity, Medical Accuracy | ✅ Complete |
@@ -188,20 +200,97 @@ python app.py
 Then open: **http://localhost:5000**
 
 **Features:**
-- ✅ **4 AI Models** - BioGPT, Clinical-BERT, Baseline LSTM + FREE backup
+- ✅ **4 AI Models** - BioGPT, Clinical-BERT, PubMedBERT + FREE GitHub backup
 - ✅ **Chat History** - See your last 10 conversations
 - ✅ **Context-Aware** - Ask follow-up questions like "What about it?"
-- ✅ **FREE AI Always Active** - Llama 70B, DeepSeek, Qwen, Gemini (auto-fallback)
+- ✅ **FREE AI Always Active** - DeepSeek R1, GPT-4o-mini, Llama 405B (auto-fallback)
 - ✅ **RAG System** - Retrieves from Harrison's medical knowledge base
 - ✅ **Beautiful UI** - Modern gradient design with chat bubbles
+- ✅ **Easy Restart** - One-click batch scripts for Windows
 
 **Note:** First load downloads BioGPT (1.5GB) and Clinical-BERT (440MB) - one time only.
 
-**FREE AI Setup (Optional):**
-1. Get a FREE API key from: https://openrouter.ai/keys
-2. Update `OPENROUTER_API_KEY` in `app.py` (line 21)
-3. Restart the app
-4. Enjoy FREE backup AI (Llama 70B, DeepSeek, Qwen, Gemini)!
+### FREE AI Setup via GitHub Models
+
+**What is GitHub Models?**
+GitHub provides FREE access to state-of-the-art AI models through their Marketplace. No credit card required!
+
+**Available FREE Models:**
+1. **DeepSeek R1** - Advanced reasoning model (primary)
+2. **GPT-4o-mini** - OpenAI's efficient model
+3. **Llama 3.1 405B** - Meta's largest open model
+4. **Mistral Large** - High-performance European model
+
+**Setup Steps:**
+
+1. **Get Your GitHub Token:**
+   - Go to: https://github.com/settings/tokens
+   - Click "Generate new token (classic)"
+   - Give it a name like "MedBot API"
+   - Select scopes: `repo` (or just leave default)
+   - Click "Generate token"
+   - Copy the token (starts with `github_pat_`)
+
+2. **Enable GitHub Models:**
+   - Visit: https://github.com/marketplace/models
+   - Browse available models
+   - Click on any model (e.g., DeepSeek, GPT-4o-mini)
+   - Models are automatically available with your GitHub account
+
+3. **Set Your Token (Choose ONE method):**
+
+   **Method A: Environment Variable (Recommended - Secure)**
+   ```bash
+   # Windows (PowerShell)
+   $env:GITHUB_TOKEN="github_pat_YOUR_TOKEN"
+   
+   # Windows (CMD)
+   set GITHUB_TOKEN=github_pat_YOUR_TOKEN
+   
+   # Linux/Mac
+   export GITHUB_TOKEN=github_pat_YOUR_TOKEN
+   ```
+   
+   **Method B: Use set_token.bat (Windows - Easy)**
+   - Double-click `set_token.bat`
+   - Paste your token when prompted
+   - Token is set for that terminal session
+   
+   **Method C: Direct in app.py (Quick but less secure)**
+   - Open `MedBot/app.py`
+   - Find line 45: `GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "your_github_token_here")`
+   - Replace `"your_github_token_here"` with your actual token
+   - Save the file
+   - **Note:** Don't commit this to GitHub!
+
+4. **Restart the App:**
+   - **Windows:** Double-click `restart.bat`
+   - **Manual:** Stop the app (Ctrl+C) and run `python app.py` again
+
+5. **Test It:**
+   - Open http://localhost:5000
+   - Ask: "What causes diabetes?"
+   - You should see 4 responses including the FREE AI backup!
+
+**Troubleshooting:**
+
+If you see "⚠️ FREE AI Backup Unavailable":
+- ✅ Check your token is correct (starts with `github_pat_`)
+- ✅ Make sure you restarted the app after updating the token
+- ✅ Verify GitHub Models are enabled at https://github.com/marketplace/models
+- ✅ Check your internet connection
+
+**How It Works:**
+- The app tries DeepSeek R1 first (best reasoning)
+- If rate limited, automatically falls back to GPT-4o-mini
+- Then tries Llama 405B, then Mistral Large
+- All models are 100% FREE via GitHub
+- No credit card required, no hidden costs
+
+**Rate Limits:**
+- GitHub provides generous free tier limits
+- If one model hits the limit, it automatically tries the next
+- Multiple fallback models ensure reliability
 
 **Example Conversation:**
 ```
@@ -338,17 +427,16 @@ Answer 1           Answer 2             Answer 3
     └──────────────────┴────────────────────┘
                        ↓
             [Need Backup AI?]
-         - Short answers (<100 chars)?
+         - Always active for best answers
          - References context ("it", "that")?
          - Has conversation history?
                        ↓ YES
-            [OpenRouter FREE Models]
+            [GitHub Models FREE API]
          Try in order until one works:
-         1. Llama 3.3 70B (primary)
-         2. DeepSeek Chat v3.1
-         3. Llama 3.3 8B
-         4. Qwen3 235B
-         5. Gemini 2.0 Flash
+         1. DeepSeek R1 (reasoning model)
+         2. GPT-4o-mini (OpenAI)
+         3. Llama 3.1 405B (Meta)
+         4. Mistral Large
                        ↓
          [Context-Aware Response]
          - Include last 5 Q&A pairs
@@ -431,25 +519,61 @@ Save trained model (baseline_lstm_model.pth)
 5. If needed, call OpenRouter with chat history for context-aware response
 6. Display comprehensive answers from each model
 
-### OpenRouter Integration (FREE Models)
+### GitHub Models Integration (FREE AI)
+
+**What is GitHub Models?**
+GitHub provides FREE access to cutting-edge AI models through their Marketplace. It's part of GitHub's initiative to make AI accessible to developers worldwide.
 
 **Available FREE Models:**
-1. **meta-llama/llama-3.3-70b-instruct:free** - 70B params, primary choice
-2. **deepseek/deepseek-chat-v3.1:free** - 163k context window
-3. **meta-llama/llama-3.3-8b-instruct:free** - Fast backup
-4. **qwen/qwen3-235b-a22b:free** - Largest model (235B)
-5. **google/gemini-2.0-flash-exp:free** - Google's free tier
+1. **deepseek-r1** - Advanced reasoning model with chain-of-thought (primary)
+2. **gpt-4o-mini** - OpenAI's efficient GPT-4 variant
+3. **meta-llama-3.1-405b-instruct** - Meta's largest open model (405B params!)
+4. **mistral-large-2411** - High-performance European model
+
+**Why GitHub Models?**
+- ✅ **100% FREE** - No credit card required
+- ✅ **No API costs** - Completely free tier
+- ✅ **State-of-the-art** - Latest models from OpenAI, Meta, DeepSeek
+- ✅ **Reliable** - Backed by Microsoft Azure infrastructure
+- ✅ **Easy setup** - Just need a GitHub account
 
 **Fallback System:**
 - Tries each model in order if one fails (rate limits)
 - Automatic retry with next model
 - Ensures reliability even with free tier limits
+- Smart error handling for 429 (rate limit) and 404 (unavailable) errors
 
 **Context-Aware Features:**
 - Sends last 5 Q&A pairs for context
 - Understands follow-up questions ("it", "that", "tell me more")
 - Shows green badge when context-aware mode is active
 - Works like ChatPDF for medical conversations
+
+**API Endpoint:**
+```
+https://models.inference.ai.azure.com/chat/completions
+```
+
+**Authentication:**
+```python
+headers = {
+    "Authorization": f"Bearer {GITHUB_TOKEN}",
+    "Content-Type": "application/json"
+}
+```
+
+**Example Request:**
+```python
+payload = {
+    "model": "deepseek-r1",
+    "messages": [
+        {"role": "system", "content": "You are a medical AI assistant."},
+        {"role": "user", "content": "What causes diabetes?"}
+    ],
+    "temperature": 0.7,
+    "max_tokens": 800
+}
+```
 
 ---
 
@@ -458,10 +582,25 @@ Save trained model (baseline_lstm_model.pth)
 ```
 MedBot/
 ├── MedBot_Complete.py              # Main system (all-in-one)
-├── README.md                       # This file
+├── README.md                       # This file (comprehensive documentation)
 ├── FINAL_SUMMARY.md                # Project summary
 ├── HOW_TO_RUN.txt                  # Detailed instructions
 ├── requirements_final.txt          # Dependencies
+├── requirements_web.txt            # Web app dependencies
+│
+├── app.py                          # Flask web application (NEW!)
+├── start.bat                       # Start the web app (Windows)
+├── stop.bat                        # Stop the web app (Windows)
+├── restart.bat                     # Restart the web app (Windows)
+├── set_token.bat                   # Set GitHub token (Windows)
+├── test_github_api.py              # Test GitHub Models API connection
+├── test_app_integration.py         # Test app integration
+├── .env.example                    # Environment variable template
+├── .gitignore                      # Git ignore file (protects secrets)
+│
+├── templates/
+│   ├── index.html                  # Main chat interface
+│   └── metrics.html                # Metrics dashboard
 │
 ├── data/
 │   └── Harrison's Principles of Internal Medicine.pdf
@@ -678,7 +817,66 @@ When tested against FAQ expected answers:
 
 ## 🔧 Troubleshooting
 
-### Common Issues
+### Web App Issues
+
+**Issue:** "⚠️ FREE AI Backup Unavailable" message appears
+```
+Solution: 
+1. Check GITHUB_TOKEN in app.py (line 45)
+2. Get token from: https://github.com/settings/tokens
+3. Update the token in app.py
+4. Run restart.bat (or stop and start manually)
+5. Refresh browser
+```
+
+**Issue:** Old version still running after code changes
+```
+Solution: 
+1. Double-click restart.bat
+   OR
+2. Double-click stop.bat, then start.bat
+   OR
+3. Manual: Ctrl+C in terminal, then python app.py
+```
+
+**Issue:** "Address already in use" or port 5000 busy
+```
+Solution:
+1. Run stop.bat to kill the process
+   OR
+2. Find process: netstat -ano | findstr :5000
+3. Kill it: taskkill /F /PID <process_id>
+```
+
+**Issue:** Models downloading slowly
+```
+Solution: 
+- First run downloads BioGPT (1.5GB) and Clinical-BERT (440MB)
+- This is one-time only
+- Subsequent runs use cached models
+- Be patient, it can take 5-10 minutes on slow connections
+```
+
+**Issue:** GitHub API returns 401 Unauthorized
+```
+Solution:
+1. Token is invalid or expired
+2. Generate new token at: https://github.com/settings/tokens
+3. Make sure token has 'repo' scope (or default scopes)
+4. Update GITHUB_TOKEN in app.py
+5. Restart the app
+```
+
+**Issue:** GitHub API returns 429 Rate Limit
+```
+Solution:
+- This is normal for free tier
+- App automatically tries next model (GPT-4o-mini, Llama, Mistral)
+- Wait a few minutes and try again
+- Multiple fallback models ensure reliability
+```
+
+### Command-Line Issues
 
 **Issue:** "Invalid choice. Exiting."
 ```
@@ -716,12 +914,58 @@ Solution: Close other applications
 Minimum 4GB RAM required, 8GB recommended
 ```
 
+### Batch Scripts (Windows)
+
+**start.bat** - Start the web app
+```batch
+@echo off
+echo Starting MedBot...
+python app.py
+```
+
+**stop.bat** - Stop the web app
+```batch
+@echo off
+echo Stopping MedBot...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5000 ^| findstr LISTENING') do (
+    taskkill /F /PID %%a
+)
+echo MedBot stopped!
+```
+
+**restart.bat** - Restart the web app (use after code changes)
+```batch
+@echo off
+echo [1/3] Stopping old app...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5000 ^| findstr LISTENING') do (
+    taskkill /F /PID %%a >nul 2>&1
+)
+timeout /t 2 /nobreak >nul
+
+echo [2/3] Starting MedBot...
+echo Open: http://localhost:5000
+python app.py
+```
+
+**Usage:**
+- Just double-click the .bat file
+- No need to open terminal
+- Automatically handles process management
+
+**When to use restart.bat:**
+- After updating GITHUB_TOKEN in app.py
+- After any code changes
+- When you see old error messages
+- To ensure fresh start
+
 ### Performance Tips
 
 - **CPU Training:** 5-10 minutes for 15 epochs
 - **GPU Training:** 2-3 minutes for 15 epochs (if CUDA available)
 - **Chatbot Response:** <1 second per question
 - **Model Loading:** 30-60 seconds first time, 5 seconds after
+- **Web App Startup:** 30-60 seconds (loads 3 models)
+- **GitHub API Response:** 2-5 seconds per request
 
 ---
 
