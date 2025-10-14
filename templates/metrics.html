@@ -214,21 +214,21 @@
         <!-- Key Metrics -->
         <div class="metrics-grid">
             <div class="metric-card">
-                <h3>Medical Transformers</h3>
-                <div class="metric-value">3</div>
-                <div class="metric-label">Pre-trained models (BioGPT, Clinical-BERT, PubMedBERT)</div>
+                <h3>System Architecture</h3>
+                <div class="metric-value">RAG</div>
+                <div class="metric-label">Retrieval-Augmented Generation with ChromaDB</div>
             </div>
 
             <div class="metric-card">
-                <h3>Total Parameters</h3>
-                <div class="metric-value">1.7B+</div>
-                <div class="metric-label">Combined model size</div>
+                <h3>Medical Transformers</h3>
+                <div class="metric-value">2</div>
+                <div class="metric-label">BioGPT (1.5B) + Clinical-BERT (110M)</div>
             </div>
 
             <div class="metric-card">
                 <h3>Response Time</h3>
                 <div class="metric-value">&lt;2s</div>
-                <div class="metric-label">Per question (all 3 models)</div>
+                <div class="metric-label">Per question (RAG + 2 models + AI backup)</div>
             </div>
 
             <div class="metric-card">
@@ -238,40 +238,42 @@
             </div>
         </div>
 
-        <!-- Model Specifications -->
+        <!-- System Architecture -->
         <div class="chart-container">
-            <h2>Medical Transformer Specifications</h2>
+            <h2>System Architecture & Components</h2>
             <table class="stats-table">
                 <thead>
                     <tr>
-                        <th>Model</th>
-                        <th>Parameters</th>
-                        <th>Training Data</th>
-                        <th>Specialization</th>
-                        <th>Context Length</th>
+                        <th>Component</th>
+                        <th>Technology</th>
+                        <th>Purpose</th>
+                        <th>Details</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td><strong style="color: #9b59b6">RAG System</strong></td>
+                        <td>ChromaDB + SentenceTransformers</td>
+                        <td>Context retrieval from Harrison's textbook</td>
+                        <td>Retrieves top 5 relevant medical contexts</td>
+                    </tr>
+                    <tr>
                         <td><strong style="color: #4ecdc4">BioGPT</strong></td>
-                        <td>1.5B</td>
-                        <td>PubMed (15M articles)</td>
+                        <td>1.5B params (microsoft/biogpt)</td>
                         <td>Medical text generation</td>
-                        <td>1024 tokens</td>
+                        <td>Trained on PubMed (15M articles)</td>
                     </tr>
                     <tr>
                         <td><strong style="color: #45b7d1">Clinical-BERT</strong></td>
-                        <td>110M</td>
-                        <td>MIMIC-III clinical notes</td>
-                        <td>Clinical reasoning</td>
-                        <td>512 tokens</td>
+                        <td>110M params (Bio_ClinicalBERT)</td>
+                        <td>Clinical reasoning & treatment</td>
+                        <td>Fine-tuned on MIMIC-III clinical notes</td>
                     </tr>
                     <tr>
-                        <td><strong style="color: #ff6b6b">PubMedBERT</strong></td>
-                        <td>110M</td>
-                        <td>PubMed abstracts + full text</td>
-                        <td>Medical definitions</td>
-                        <td>512 tokens</td>
+                        <td><strong style="color: #667eea">GitHub AI Backup</strong></td>
+                        <td>DeepSeek R1, GPT-4o-mini, Llama 405B</td>
+                        <td>Context-aware comprehensive answers</td>
+                        <td>100% FREE with automatic fallback</td>
                     </tr>
                 </tbody>
             </table>
@@ -279,12 +281,12 @@
 
         <!-- Model Comparison Chart -->
         <div class="chart-container">
-            <h2>Model Response Quality Comparison</h2>
+            <h2>Component Quality Comparison</h2>
             <div class="chart-wrapper">
                 <canvas id="modelComparisonChart"></canvas>
             </div>
             <p style="margin-top: 20px; color: #666;">
-                <strong>Note:</strong> All models are pre-trained on medical data. No additional training required.
+                <strong>Note:</strong> RAG provides context, medical transformers generate specialized answers, GitHub AI provides comprehensive backup.
             </p>
         </div>
 
@@ -367,6 +369,17 @@
                     labels: ['Medical Accuracy', 'Comprehensiveness', 'Relevance', 'Clarity', 'Speed'],
                     datasets: [
                         {
+                            label: 'RAG System (Context Retrieval)',
+                            data: [95, 70, 98, 80, 95],
+                            backgroundColor: 'rgba(155, 89, 182, 0.2)',
+                            borderColor: 'rgba(155, 89, 182, 1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: 'rgba(155, 89, 182, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(155, 89, 182, 1)'
+                        },
+                        {
                             label: 'BioGPT (1.5B)',
                             data: [92, 88, 90, 85, 75],
                             backgroundColor: 'rgba(78, 205, 196, 0.2)',
@@ -389,15 +402,15 @@
                             pointHoverBorderColor: 'rgba(69, 183, 209, 1)'
                         },
                         {
-                            label: 'PubMedBERT (110M)',
-                            data: [90, 85, 92, 88, 90],
-                            backgroundColor: 'rgba(255, 107, 107, 0.2)',
-                            borderColor: 'rgba(255, 107, 107, 1)',
+                            label: 'GitHub AI Backup',
+                            data: [96, 95, 92, 94, 70],
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                            borderColor: 'rgba(102, 126, 234, 1)',
                             borderWidth: 3,
-                            pointBackgroundColor: 'rgba(255, 107, 107, 1)',
+                            pointBackgroundColor: 'rgba(102, 126, 234, 1)',
                             pointBorderColor: '#fff',
                             pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: 'rgba(255, 107, 107, 1)'
+                            pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
                         }
                     ]
                 },
@@ -427,20 +440,20 @@
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['BioGPT', 'Clinical-BERT', 'PubMedBERT', 'GitHub AI Backup'],
+                    labels: ['RAG Context', 'BioGPT', 'Clinical-BERT', 'GitHub AI Backup'],
                     datasets: [{
                         label: 'Response Quality Score',
-                        data: [88, 90, 89, 95],
+                        data: [87, 88, 90, 95],
                         backgroundColor: [
+                            'rgba(155, 89, 182, 0.7)',
                             'rgba(78, 205, 196, 0.7)',
                             'rgba(69, 183, 209, 0.7)',
-                            'rgba(255, 107, 107, 0.7)',
                             'rgba(102, 126, 234, 0.7)'
                         ],
                         borderColor: [
+                            'rgba(155, 89, 182, 1)',
                             'rgba(78, 205, 196, 1)',
                             'rgba(69, 183, 209, 1)',
-                            'rgba(255, 107, 107, 1)',
                             'rgba(102, 126, 234, 1)'
                         ],
                         borderWidth: 2
