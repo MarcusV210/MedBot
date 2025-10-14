@@ -337,9 +337,12 @@ def ask():
         # Check if answers are too short/generic OR if question references previous context
         context_words = ['it', 'that', 'this', 'them', 'those', 'previous', 'earlier', 'above', 'also', 'more about', 'tell me more', 'what about', 'how about']
         references_context = any(word in question.lower() for word in context_words)
-        needs_backup = (all(len(ans) < 100 for ans in [answers['baseline'], answers['biogpt'], answers['clinbert']]) 
-                       or references_context 
-                       or len(session['chat_history']) > 0)
+        
+        # ALWAYS use backup for better answers (it's FREE!)
+        needs_backup = True  # Always get comprehensive FREE AI answer
+        
+        # Determine if it's context-aware
+        is_context_aware = references_context or len(session['chat_history']) > 0
         
         # Use OpenRouter (Gemini Flash) as backup with full chat history
         if needs_backup:
@@ -362,9 +365,10 @@ def ask():
                 if backup_answer:
                     answers['gemini_backup'] = backup_answer
                     answers['used_backup'] = True
-                    answers['context_aware'] = references_context
+                    answers['context_aware'] = is_context_aware
                 else:
                     answers['used_backup'] = False
+                    answers['context_aware'] = False
             except Exception as e:
                 print(f"Backup failed: {e}")
                 answers['used_backup'] = False

@@ -188,14 +188,14 @@ python app.py
 Then open: **http://localhost:5000**
 
 **Features:**
+- ✅ **4 AI Models** - BioGPT, Clinical-BERT, Baseline LSTM + FREE backup
 - ✅ **Chat History** - See your last 10 conversations
 - ✅ **Context-Aware** - Ask follow-up questions like "What about it?"
-- ✅ **FREE Backup AI** - 5 free models (Llama 70B, DeepSeek, Qwen, etc.)
+- ✅ **FREE AI Always Active** - Llama 70B, DeepSeek, Qwen, Gemini (auto-fallback)
 - ✅ **RAG System** - Retrieves from Harrison's medical knowledge base
-- ✅ **Smart Activation** - Backup activates for short answers or context references
-- ✅ **Beautiful UI** - Modern gradient design with animations
+- ✅ **Beautiful UI** - Modern gradient design with chat bubbles
 
-**Note:** First load will download BioGPT (1.5GB) and Clinical-BERT (440MB). Subsequent loads are instant. Models are cached locally.
+**Note:** First load downloads BioGPT (1.5GB) and Clinical-BERT (440MB) - one time only. FREE AI models stream from OpenRouter (no download needed).
 
 **Example Conversation:**
 ```

@@ -386,8 +386,9 @@
             </div>
 
             <div class="results" id="results">
-                <p style="text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-radius: 10px;">
-                    🤖 Answers from 3 AI models + FREE backup (Llama 70B). First load may take 30-60 seconds to download models.
+                <p style="text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; padding: 12px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border-radius: 10px; border: 2px solid #34a853;">
+                    🤖 <strong>3 AI Models</strong> (BioGPT, Clinical-BERT, Baseline LSTM) + <strong style="color: #34a853;">FREE Backup AI</strong> (Llama 70B, DeepSeek, Qwen, Gemini)
+                    <br><span style="font-size: 0.85em;">💡 First load downloads models (~2GB, one-time only)</span>
                 </p>
                 <div class="model-card baseline">
                     <div class="model-title">
@@ -413,13 +414,16 @@
                     <div class="model-answer" id="clinbert-answer"></div>
                 </div>
 
-                <!-- Gemini Backup (if used) -->
-                <div class="model-card" id="gemini-card" style="border-left-color: #fbbc04; display: none;">
+                <!-- FREE AI Backup (OpenRouter) -->
+                <div class="model-card" id="gemini-card" style="border-left-color: #34a853; display: none;">
                     <div class="model-title">
-                        <span>Google Gemini Flash</span>
-                        <span class="model-badge" style="background: #fbbc04;">Backup - Comprehensive</span>
+                        <span id="backup-model-name">FREE AI Backup</span>
+                        <span class="model-badge" id="backup-badge" style="background: #34a853;">Context-Aware</span>
                     </div>
                     <div class="model-answer" id="gemini-answer"></div>
+                    <div style="margin-top: 10px; padding: 8px; background: #f0f9ff; border-radius: 8px; font-size: 0.85em; color: #666;">
+                        💡 <strong>FREE Models:</strong> Llama 70B, DeepSeek, Qwen, Gemini (auto-fallback if rate limited)
+                    </div>
                 </div>
             </div>
         </div>
@@ -473,21 +477,27 @@
                         document.getElementById('clinbert-answer').textContent = data.clinbert;
                     }, 500);
                     
-                    // Show Gemini backup if used
+                    // Show FREE AI backup if used
                     if (data.used_backup && data.gemini_backup) {
                         setTimeout(() => {
                             const geminiCard = document.getElementById('gemini-card');
+                            const backupBadge = document.getElementById('backup-badge');
+                            const backupName = document.getElementById('backup-model-name');
+                            
                             geminiCard.style.display = 'block';
                             document.getElementById('gemini-answer').textContent = data.gemini_backup;
                             
-                            // Show context-aware badge if applicable
-                            const badge = geminiCard.querySelector('.model-badge');
+                            // Update model name and badge
                             if (data.context_aware) {
-                                badge.textContent = 'Context-Aware (ChatPDF-style)';
-                                badge.style.background = '#34a853';
+                                backupName.textContent = '🤖 FREE AI (Context-Aware)';
+                                backupBadge.textContent = 'ChatPDF-style';
+                                backupBadge.style.background = '#34a853';
+                                geminiCard.style.borderLeftColor = '#34a853';
                             } else {
-                                badge.textContent = 'Backup - Comprehensive';
-                                badge.style.background = '#fbbc04';
+                                backupName.textContent = '🤖 FREE AI Backup';
+                                backupBadge.textContent = 'Comprehensive';
+                                backupBadge.style.background = '#fbbc04';
+                                geminiCard.style.borderLeftColor = '#fbbc04';
                             }
                         }, 700);
                     } else {
