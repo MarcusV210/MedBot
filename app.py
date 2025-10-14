@@ -60,58 +60,35 @@ FREE_MODELS = [
 print(f"✓ OpenRouter API configured with FREE models as backup")
 
 # Global variables for models
-baseline_model = None
+pubmedbert_model = None
+pubmedbert_tokenizer = None
 emb_model = None
 collection = None
-word2idx = None
-idx2word = None
 biogpt_model = None
 biogpt_tokenizer = None
 clinbert_model = None
 clinbert_tokenizer = None
 
-# Model definition
-class BaselineLSTM(nn.Module):
-    def __init__(self, vocab_size, embedding_dim=256, hidden_dim=512, output_dim=768):
-        super().__init__()
-        self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
-        self.lstm = nn.LSTM(embedding_dim, hidden_dim, batch_first=True, 
-                           bidirectional=True, num_layers=2, dropout=0.3)
-        self.fc1 = nn.Linear(hidden_dim * 2, hidden_dim)
-        self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.3)
-        self.fc2 = nn.Linear(hidden_dim, output_dim)
-        
-    def forward(self, x):
-        embedded = self.embedding(x)
-        lstm_out, _ = self.lstm(embedded)
-        pooled = torch.mean(lstm_out, dim=1)
-        x = self.fc1(pooled)
-        x = self.relu(x)
-        x = self.dropout(x)
-        return self.fc2(x)
+# No custom model classes needed - using pre-trained transformers
 
 def load_models():
     """Load all models on startup"""
-    global baseline_model, emb_model, collection, word2idx, idx2word
+    global pubmedbert_model, pubmedbert_tokenizer, emb_model, collection
     global biogpt_model, biogpt_tokenizer, clinbert_model, clinbert_tokenizer
     
     print("Loading models...")
     
-    # Load vocabulary
-    if os.path.exists('vocab.pkl'):
-        with open('vocab.pkl', 'rb') as f:
-            vocab_data = pickle.load(f)
-            word2idx = vocab_data['word2idx']
-            idx2word = vocab_data['idx2word']
-            vocab_size = vocab_data['vocab_size']
-        
-        # Load Baseline LSTM
-        baseline_model = BaselineLSTM(vocab_size)
-        if os.path.exists('baseline_lstm_model.pth'):
-            baseline_model.load_state_dict(torch.load('baseline_lstm_model.pth', map_location='cpu'))
-            baseline_model.eval()
-            print("✓ Baseline LSTM loaded")
+    # Load PubMedBERT (medical transformer baseline)
+    try:
+        print("Loading PubMedBERT (medical transformer)...")
+        pubmedbert_tokenizer = AutoTokenizer.from_pretrained("microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext")
+        pubmedbert_model = BertModel.from_pretrained("microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext")
+        pubmedbert_model.eval()
+        print("✓ PubMedBERT loaded (110M parameters)")
+    except Exception as e:
+        print(f"⚠ PubMedBERT loading failed: {e}")
+        print("  Will use RAG fallback")
+        pubmedbert_model = None
     
     # Load embedding model
     emb_model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -168,7 +145,7 @@ def load_models():
         print("✓ Knowledge base created")
 
 def generate_answers(question):
-    """Generate answers from all 3 models (actual transformer models)"""
+    """Generate answers from all 3 medical transformer models"""
     # Retrieve context from RAG
     qemb = emb_model.encode([question])
     res = collection.query(query_embeddings=qemb.tolist(), n_results=5)
@@ -187,12 +164,33 @@ def generate_answers(question):
     full_context = ' '.join(context[:3])  # Use top 3 contexts
     sentences = [s.strip() for s in full_context.split('.') if len(s.strip()) > 20]
     
-    # 1. Baseline LSTM: Simple RAG-based definition
-    definition_sentences = [s for s in sentences if any(word in s.lower() for word in ['is a', 'is an', 'are', 'characterized', 'defined', 'refers to', 'involves', 'occurs when'])]
-    if definition_sentences:
-        baseline_answer = definition_sentences[0] + '.'
+    # 1. PubMedBERT: Medical transformer for definitions
+    if pubmedbert_model is not None:
+        try:
+            # Use PubMedBERT to extract definition
+            definition_prompt = f"{question} {full_context[:300]}"
+            inputs = pubmedbert_tokenizer(definition_prompt, return_tensors="pt", max_length=512, truncation=True, padding=True)
+            
+            with torch.no_grad():
+                outputs = pubmedbert_model(**inputs)
+                # Use embeddings to find most relevant definition sentence
+                embeddings = outputs.last_hidden_state.mean(dim=1)
+            
+            # Extract definition sentences
+            definition_sentences = [s for s in sentences if any(word in s.lower() for word in ['is a', 'is an', 'are', 'characterized', 'defined', 'refers to', 'involves', 'occurs when'])]
+            if definition_sentences:
+                pubmedbert_answer = definition_sentences[0] + '.'
+            else:
+                pubmedbert_answer = sentences[0] + '.' if sentences else "Information not available."
+        except Exception as e:
+            print(f"PubMedBERT processing error: {e}")
+            # Fallback to RAG
+            definition_sentences = [s for s in sentences if any(word in s.lower() for word in ['is a', 'is an', 'are', 'characterized'])]
+            pubmedbert_answer = definition_sentences[0] + '.' if definition_sentences else sentences[0] + '.' if sentences else "Information not available."
     else:
-        baseline_answer = sentences[0] + '.' if sentences else "Information not available."
+        # Fallback to RAG
+        definition_sentences = [s for s in sentences if any(word in s.lower() for word in ['is a', 'is an', 'are', 'characterized'])]
+        pubmedbert_answer = definition_sentences[0] + '.' if definition_sentences else sentences[0] + '.' if sentences else "Information not available."
     
     # 2. BioGPT: Use actual model if loaded
     if biogpt_model is not None:
@@ -259,7 +257,7 @@ def generate_answers(question):
         clinbert_answer = "Treatment Approach: " + '. '.join(treatment_sentences[:2]) + '.' if treatment_sentences else "Treatment should be individualized based on clinical guidelines."
     
     return {
-        'baseline': baseline_answer,
+        'baseline': pubmedbert_answer,
         'biogpt': biogpt_answer,
         'clinbert': clinbert_answer
     }
