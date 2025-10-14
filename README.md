@@ -16,6 +16,33 @@
 
 ---
 
+## ⚡ Quick Start (Web Interface - NEW!)
+
+```bash
+# 1. Install dependencies
+pip install -r requirements_web.txt
+
+# 2. Run the web app
+python app.py
+
+# 3. Open browser
+http://localhost:5000
+```
+
+**Try this conversation:**
+1. "What causes diabetes?"
+2. "What are the treatment options for it?" ← (context-aware!)
+3. "Tell me more about metformin" ← (continues discussion)
+
+**Features:**
+- ✅ Chat history (last 10 conversations)
+- ✅ Context-aware responses (like ChatPDF)
+- ✅ 5 FREE backup AI models (Llama 70B, DeepSeek, etc.)
+- ✅ Beautiful modern UI
+- ✅ $0.00 cost (100% free!)
+
+---
+
 ## 📋 Table of Contents
 
 - [Overview](#overview)
@@ -50,9 +77,13 @@ MedBot is a complete **Medical AI System** that combines deep learning with natu
 | **Training** | Baseline LSTM on 2,000 pages from Harrison's | ✅ Complete |
 | **Vocabulary** | 46,868 medical terms learned | ✅ Complete |
 | **Models** | 3 AI models (Baseline, BioGPT, Clinical-BERT) | ✅ Complete |
+| **Backup AI** | 5 FREE models via OpenRouter (Llama 70B, DeepSeek, etc.) | ✅ Complete |
+| **Chat History** | ChatPDF-style conversation memory (last 10 chats) | ✅ Complete |
+| **Context-Aware** | Understands follow-up questions ("it", "that", "tell me more") | ✅ Complete |
 | **Evaluation** | ROUGE, Semantic Similarity, Medical Accuracy | ✅ Complete |
-| **Chatbot** | Interactive Q&A with real-time inference | ✅ Complete |
+| **Web Interface** | Flask app with real-time inference | ✅ Complete |
 | **Accuracy** | 84.6% overall (verified against FAQ) | ✅ Complete |
+| **Cost** | 100% FREE (no API costs) | ✅ Complete |
 
 ---
 
@@ -142,6 +173,47 @@ python MedBot_Complete.py
 
 ## 💬 Interactive Chatbot
 
+### Web Interface (NEW!)
+
+Run the Flask web app for a modern chat interface:
+
+```bash
+# Install web dependencies
+pip install -r requirements_web.txt
+
+# Run the web app
+python app.py
+```
+
+Then open: **http://localhost:5000**
+
+**Features:**
+- ✅ **Chat History** - See your last 10 conversations
+- ✅ **Context-Aware** - Ask follow-up questions like "What about it?"
+- ✅ **FREE Backup AI** - 5 free models (Llama 70B, DeepSeek, Qwen, etc.)
+- ✅ **RAG System** - Retrieves from Harrison's medical knowledge base
+- ✅ **Smart Activation** - Backup activates for short answers or context references
+- ✅ **Beautiful UI** - Modern gradient design with animations
+
+**Note:** First load will download BioGPT (1.5GB) and Clinical-BERT (440MB). Subsequent loads are instant. Models are cached locally.
+
+**Example Conversation:**
+```
+You: What causes diabetes?
+Bot: [Shows 3 base models + FREE Llama 70B backup]
+
+You: What are the treatment options for it?
+     ↑ (Understands "it" = diabetes from history)
+Bot: 🟢 Context-Aware (ChatPDF-style)
+     [Detailed treatment info using conversation context]
+
+You: Tell me more about metformin
+Bot: 🟢 Context-Aware
+     [Continues the diabetes treatment discussion]
+```
+
+### Command-Line Chatbot
+
 ### Sample Session
 
 ```
@@ -207,6 +279,15 @@ Thank you for using MedBot! Goodbye!
 
 ### Chatbot Features
 
+**Web Interface:**
+- ✅ **Chat History** - Remembers last 10 conversations
+- ✅ **Context-Aware** - Understands "it", "that", "tell me more"
+- ✅ **FREE Backup AI** - 5 free models with automatic fallback
+- ✅ **Smart Activation** - Backup for short answers or context questions
+- ✅ **Beautiful UI** - Modern design with real-time updates
+- ✅ **Session-based** - Each browser has its own history
+
+**Command-Line:**
 - ✅ **Real-time inference** from all 3 models
 - ✅ **Comprehensive answers** matching medical textbook quality
 - ✅ **RAG-powered** context retrieval from medical knowledge base
@@ -228,14 +309,16 @@ Thank you for using MedBot! Goodbye!
 
 ## 🔬 Technical Architecture
 
-### System Overview
+### System Overview (Web Interface)
 
 ```
 User Question
     ↓
+[Check Chat History - Last 10 conversations]
+    ↓
 Semantic Embedding (SentenceTransformer)
     ↓
-RAG Retrieval (ChromaDB) → Top 3 Medical Contexts
+RAG Retrieval (ChromaDB) → Top 5 Medical Contexts
     ↓
 ┌─────────────────┬──────────────────┬─────────────────────┐
 │ Baseline LSTM   │   BioGPT         │ Clinical-BERT       │
@@ -248,7 +331,29 @@ Answer 1           Answer 2             Answer 3
     ↓                  ↓                    ↓
     └──────────────────┴────────────────────┘
                        ↓
-            Display All 3 Answers
+            [Need Backup AI?]
+         - Short answers (<100 chars)?
+         - References context ("it", "that")?
+         - Has conversation history?
+                       ↓ YES
+            [OpenRouter FREE Models]
+         Try in order until one works:
+         1. Llama 3.3 70B (primary)
+         2. DeepSeek Chat v3.1
+         3. Llama 3.3 8B
+         4. Qwen3 235B
+         5. Gemini 2.0 Flash
+                       ↓
+         [Context-Aware Response]
+         - Include last 5 Q&A pairs
+         - Understand follow-ups
+                       ↓
+            Display All Answers
+         + Green "Context-Aware" badge
+                       ↓
+         [Save to Chat History]
+         - Store Q&A pair
+         - Keep last 10
 ```
 
 ### Baseline LSTM Architecture
@@ -314,9 +419,31 @@ Save trained model (baseline_lstm_model.pth)
 
 **Retrieval Process:**
 1. Convert user question to embedding
-2. Search ChromaDB for top-3 most similar medical contexts
+2. Search ChromaDB for top-5 most similar medical contexts
 3. Pass contexts to all 3 models for answer generation
-4. Display comprehensive answers from each model
+4. Check if backup AI needed (short answers or context references)
+5. If needed, call OpenRouter with chat history for context-aware response
+6. Display comprehensive answers from each model
+
+### OpenRouter Integration (FREE Models)
+
+**Available FREE Models:**
+1. **meta-llama/llama-3.3-70b-instruct:free** - 70B params, primary choice
+2. **deepseek/deepseek-chat-v3.1:free** - 163k context window
+3. **meta-llama/llama-3.3-8b-instruct:free** - Fast backup
+4. **qwen/qwen3-235b-a22b:free** - Largest model (235B)
+5. **google/gemini-2.0-flash-exp:free** - Google's free tier
+
+**Fallback System:**
+- Tries each model in order if one fails (rate limits)
+- Automatic retry with next model
+- Ensures reliability even with free tier limits
+
+**Context-Aware Features:**
+- Sends last 5 Q&A pairs for context
+- Understands follow-up questions ("it", "that", "tell me more")
+- Shows green badge when context-aware mode is active
+- Works like ChatPDF for medical conversations
 
 ---
 

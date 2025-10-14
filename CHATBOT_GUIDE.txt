@@ -1,0 +1,136 @@
+═══════════════════════════════════════════════════════════════════
+MedBot - ChatPDF-Style Conversation Interface
+═══════════════════════════════════════════════════════════════════
+
+HOW IT WORKS:
+
+1. START A CONVERSATION
+   ┌─────────────────────────────────────────────────────────────┐
+   │ Ask: "What causes diabetes?"                                │
+   │ [Ask Button]                                                │
+   └─────────────────────────────────────────────────────────────┘
+   
+   You'll see:
+   - 3 base model answers (Baseline LSTM, BioGPT, Clinical-BERT)
+   - FREE backup AI answer (Llama 70B or others)
+
+2. CONVERSATION HISTORY APPEARS
+   ┌─────────────────────────────────────────────────────────────┐
+   │ 💬 Conversation History                      [Clear All]    │
+   ├─────────────────────────────────────────────────────────────┤
+   │                                                              │
+   │                    You: What causes diabetes?               │
+   │                    ╭────────────────────────╮               │
+   │                                                              │
+   │  MedBot 🤖 AI: Type 2 diabetes arises from insulin         │
+   │  ╰────────────────────────────────────────────╯             │
+   │  resistance and progressive beta-cell dysfunction...        │
+   │                                                              │
+   └─────────────────────────────────────────────────────────────┘
+
+3. ASK FOLLOW-UP QUESTIONS
+   ┌─────────────────────────────────────────────────────────────┐
+   │ 💡 Try: "What about it?", "Tell me more", "How is that     │
+   │    treated?"                                                │
+   ├─────────────────────────────────────────────────────────────┤
+   │ Ask: "What are the treatment options for it?"               │
+   │ [Ask Button]                                                │
+   └─────────────────────────────────────────────────────────────┘
+   
+   The AI understands "it" = diabetes from your conversation!
+   
+   You'll see a green badge: 🟢 Context-Aware (ChatPDF-style)
+
+4. CONTINUE THE CONVERSATION
+   ┌─────────────────────────────────────────────────────────────┐
+   │ 💬 Conversation History                      [Clear All]    │
+   ├─────────────────────────────────────────────────────────────┤
+   │                                                              │
+   │                    You: What causes diabetes?               │
+   │  MedBot 🤖: Type 2 diabetes arises from...                 │
+   │                                                              │
+   │                    You: What are the treatment options?     │
+   │  MedBot 🤖 AI: Treatment includes metformin, SGLT2...      │
+   │                                                              │
+   │                    You: Tell me more about metformin        │
+   │  MedBot 🤖 AI: Metformin is the first-line therapy...     │
+   │                                                              │
+   └─────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════
+KEY FEATURES:
+═══════════════════════════════════════════════════════════════════
+
+✅ CONVERSATION BUBBLES
+   - Your questions appear on the right (purple gradient)
+   - Bot answers appear on the left (white with blue border)
+   - 🤖 AI badge shows when backup model is used
+
+✅ CONTEXT AWARENESS
+   - Remembers last 10 conversations
+   - Sends last 5 Q&A pairs to AI
+   - Understands: "it", "that", "this", "tell me more", etc.
+
+✅ FREE BACKUP AI
+   - Llama 3.3 70B (primary)
+   - DeepSeek Chat v3.1
+   - Llama 3.3 8B
+   - Qwen3 235B
+   - Google Gemini 2.0 Flash
+   
+   Tries each model if one hits rate limits!
+
+✅ SMART ACTIVATION
+   Backup AI activates when:
+   - Base answers are too short (<100 chars)
+   - Question references previous context
+   - Any conversation history exists
+
+✅ VISUAL INDICATORS
+   - 🟢 Green badge = Context-aware response
+   - 🟡 Yellow badge = Backup comprehensive answer
+   - 🤖 AI icon = Backup model used
+
+═══════════════════════════════════════════════════════════════════
+EXAMPLE CONVERSATION:
+═══════════════════════════════════════════════════════════════════
+
+Q1: What causes hypertension?
+A1: [3 base models + Llama 70B backup]
+    Essential hypertension results from genetic and environmental
+    factors affecting cardiac output and vascular resistance...
+
+Q2: What are the treatment options for it?
+    ↑ (AI understands "it" = hypertension)
+A2: 🟢 Context-Aware (ChatPDF-style)
+    Treatment includes lifestyle modifications (DASH diet, sodium
+    restriction, exercise) and medications (ACE inhibitors, ARBs,
+    calcium channel blockers, diuretics)...
+
+Q3: Tell me more about ACE inhibitors
+    ↑ (Continues the hypertension treatment discussion)
+A3: 🟢 Context-Aware (ChatPDF-style)
+    ACE inhibitors work by blocking angiotensin-converting enzyme,
+    reducing angiotensin II production. Common examples include
+    lisinopril, enalapril, ramipril...
+
+Q4: What are the side effects?
+    ↑ (Knows we're talking about ACE inhibitors)
+A4: 🟢 Context-Aware (ChatPDF-style)
+    Common side effects include dry cough (10-15% of patients),
+    hyperkalemia, hypotension, and rarely angioedema...
+
+═══════════════════════════════════════════════════════════════════
+TIPS:
+═══════════════════════════════════════════════════════════════════
+
+1. Start with a clear medical question
+2. Use follow-up questions to dive deeper
+3. Reference previous topics with "it", "that", "this"
+4. Ask "Tell me more" to continue the topic
+5. Click "Clear All" to start a new conversation
+6. Input clears automatically after each question
+
+═══════════════════════════════════════════════════════════════════
+COST: $0.00 (100% FREE!)
+═══════════════════════════════════════════════════════════════════

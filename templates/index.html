@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedBot - Medical AI Assistant</title>
+    <title>MedBot - Medical AI Assistant v2.0</title>
     <style>
         * {
             margin: 0;
@@ -30,14 +30,25 @@
         }
 
         .header h1 {
-            font-size: 3em;
+            font-size: 3.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 3px 3px 6px rgba(0,0,0,0.4), 0 0 10px rgba(255,255,255,0.3);
+            }
+            to {
+                text-shadow: 3px 3px 6px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.6);
+            }
         }
 
         .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
+            font-size: 1.3em;
+            opacity: 0.95;
+            font-weight: 500;
         }
 
         .chat-container {
@@ -74,15 +85,21 @@
             color: white;
             border: none;
             border-radius: 50px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         #askButton:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        #askButton:active {
+            transform: translateY(-1px) scale(1.02);
         }
 
         #askButton:disabled {
@@ -96,17 +113,18 @@
         }
 
         .model-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 5px solid;
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 8px solid;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
 
         .model-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         .model-card.baseline {
@@ -202,33 +220,51 @@
         }
 
         .stat-box {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
+            border-radius: 20px;
+            padding: 30px 20px;
             text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            transition: all 0.4s ease;
             animation: fadeInUp 0.6s ease-out;
+            border: 2px solid rgba(255,255,255,0.5);
         }
 
         .stat-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+            border-color: rgba(255,255,255,0.8);
         }
 
         .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
+            font-size: 3.5em;
+            font-weight: 900;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 10px;
+            animation: countUp 1s ease-out;
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .stat-label {
-            color: #666;
-            font-size: 0.9em;
-            margin-top: 5px;
+            color: #555;
+            font-size: 1em;
+            margin-top: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         @keyframes fadeInUp {
@@ -318,6 +354,15 @@
         </div>
 
         <div class="chat-container">
+            <!-- Conversation History (ChatPDF-style) -->
+            <div id="conversationArea" style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px; max-height: 400px; overflow-y: auto; display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #667eea; padding-bottom: 10px;">
+                    <h3 style="color: #667eea; margin: 0;">💬 Conversation History</h3>
+                    <button onclick="clearHistory()" style="padding: 5px 15px; background: #ff6b6b; color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em; transition: all 0.3s;" onmouseover="this.style.background='#ff5252'" onmouseout="this.style.background='#ff6b6b'">Clear All</button>
+                </div>
+                <div id="conversationList"></div>
+            </div>
+
             <div class="input-section">
                 <input 
                     type="text" 
@@ -326,6 +371,11 @@
                     onkeypress="if(event.key === 'Enter') askQuestion()"
                 >
                 <button id="askButton" onclick="askQuestion()">Ask</button>
+            </div>
+            
+            <!-- Helpful hint for follow-up questions -->
+            <div id="followUpHint" style="text-align: center; color: #667eea; font-size: 0.9em; margin-bottom: 15px; display: none;">
+                💡 Try asking follow-up questions like: "What about it?", "Tell me more", "How is that treated?"
             </div>
 
             <div class="error" id="error"></div>
@@ -336,6 +386,9 @@
             </div>
 
             <div class="results" id="results">
+                <p style="text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-radius: 10px;">
+                    🤖 Answers from 3 AI models + FREE backup (Llama 70B). First load may take 30-60 seconds to download models.
+                </p>
                 <div class="model-card baseline">
                     <div class="model-title">
                         <span>Baseline LSTM</span>
@@ -347,7 +400,7 @@
                 <div class="model-card biogpt">
                     <div class="model-title">
                         <span>BioGPT</span>
-                        <span class="model-badge">Etiology & Risk Factors</span>
+                        <span class="model-badge">Medical Analysis (1.5B params)</span>
                     </div>
                     <div class="model-answer" id="biogpt-answer"></div>
                 </div>
@@ -355,9 +408,18 @@
                 <div class="model-card clinbert">
                     <div class="model-title">
                         <span>Clinical-BERT</span>
-                        <span class="model-badge">Treatment</span>
+                        <span class="model-badge">Treatment (110M params)</span>
                     </div>
                     <div class="model-answer" id="clinbert-answer"></div>
+                </div>
+
+                <!-- Gemini Backup (if used) -->
+                <div class="model-card" id="gemini-card" style="border-left-color: #fbbc04; display: none;">
+                    <div class="model-title">
+                        <span>Google Gemini Flash</span>
+                        <span class="model-badge" style="background: #fbbc04;">Backup - Comprehensive</span>
+                    </div>
+                    <div class="model-answer" id="gemini-answer"></div>
                 </div>
             </div>
         </div>
@@ -410,6 +472,37 @@
                     setTimeout(() => {
                         document.getElementById('clinbert-answer').textContent = data.clinbert;
                     }, 500);
+                    
+                    // Show Gemini backup if used
+                    if (data.used_backup && data.gemini_backup) {
+                        setTimeout(() => {
+                            const geminiCard = document.getElementById('gemini-card');
+                            geminiCard.style.display = 'block';
+                            document.getElementById('gemini-answer').textContent = data.gemini_backup;
+                            
+                            // Show context-aware badge if applicable
+                            const badge = geminiCard.querySelector('.model-badge');
+                            if (data.context_aware) {
+                                badge.textContent = 'Context-Aware (ChatPDF-style)';
+                                badge.style.background = '#34a853';
+                            } else {
+                                badge.textContent = 'Backup - Comprehensive';
+                                badge.style.background = '#fbbc04';
+                            }
+                        }, 700);
+                    } else {
+                        document.getElementById('gemini-card').style.display = 'none';
+                    }
+                    
+                    // Reload history and scroll to show conversation
+                    loadHistory();
+                    
+                    // Clear input for next question
+                    input.value = '';
+                    input.placeholder = 'Ask a follow-up question...';
+                    
+                    // Scroll results into view
+                    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } else {
                     showError(data.error || 'An error occurred');
                 }
@@ -427,9 +520,69 @@
             document.getElementById('loading').style.display = 'none';
         }
 
-        // Focus input on load
+        // Load conversation history (ChatPDF-style)
+        async function loadHistory() {
+            try {
+                const response = await fetch('/history');
+                const data = await response.json();
+                
+                if (data.history && data.history.length > 0) {
+                    document.getElementById('conversationArea').style.display = 'block';
+                    document.getElementById('followUpHint').style.display = 'block';
+                    const conversationList = document.getElementById('conversationList');
+                    conversationList.innerHTML = '';
+                    
+                    data.history.forEach((item, index) => {
+                        // Question bubble (user)
+                        const questionDiv = document.createElement('div');
+                        questionDiv.style.cssText = 'margin-bottom: 15px; text-align: right;';
+                        questionDiv.innerHTML = `
+                            <div style="display: inline-block; max-width: 80%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 18px; border-radius: 18px 18px 4px 18px; text-align: left; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);">
+                                <strong>You:</strong> ${item.question}
+                            </div>
+                        `;
+                        conversationList.appendChild(questionDiv);
+                        
+                        // Answer bubble (bot)
+                        const answerDiv = document.createElement('div');
+                        answerDiv.style.cssText = 'margin-bottom: 20px; text-align: left;';
+                        const badge = item.used_backup ? '<span style="background: #34a853; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; margin-left: 8px;">🤖 AI</span>' : '';
+                        answerDiv.innerHTML = `
+                            <div style="display: inline-block; max-width: 80%; background: white; padding: 12px 18px; border-radius: 18px 18px 18px 4px; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #667eea;">
+                                <strong style="color: #667eea;">MedBot${badge}:</strong><br>
+                                <span style="color: #333; margin-top: 5px; display: block;">${item.answer.substring(0, 200)}${item.answer.length > 200 ? '...' : ''}</span>
+                            </div>
+                        `;
+                        conversationList.appendChild(answerDiv);
+                    });
+                    
+                    // Scroll to bottom
+                    conversationList.scrollTop = conversationList.scrollHeight;
+                }
+            } catch (error) {
+                console.log('No history available');
+            }
+        }
+
+        async function clearHistory() {
+            if (confirm('Clear all conversation history?')) {
+                try {
+                    await fetch('/clear_history', { method: 'POST' });
+                    document.getElementById('conversationArea').style.display = 'none';
+                    document.getElementById('conversationList').innerHTML = '';
+                    document.getElementById('followUpHint').style.display = 'none';
+                    document.getElementById('questionInput').placeholder = 'Ask a medical question (e.g., What causes hypertension?)';
+                    alert('Conversation history cleared! Start a new conversation.');
+                } catch (error) {
+                    console.error('Failed to clear history');
+                }
+            }
+        }
+
+        // Focus input on load and load history
         window.onload = function() {
             document.getElementById('questionInput').focus();
+            loadHistory();
         };
     </script>
 </body>
