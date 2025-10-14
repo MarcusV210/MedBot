@@ -417,11 +417,11 @@
                 <!-- FREE AI Backup (OpenRouter) -->
                 <div class="model-card" id="gemini-card" style="border-left-color: #34a853; display: none;">
                     <div class="model-title">
-                        <span id="backup-model-name">FREE AI Backup</span>
+                        <span id="backup-model-name">🤖 FREE AI Backup</span>
                         <span class="model-badge" id="backup-badge" style="background: #34a853;">Context-Aware</span>
                     </div>
-                    <div class="model-answer" id="gemini-answer"></div>
-                    <div style="margin-top: 10px; padding: 8px; background: #f0f9ff; border-radius: 8px; font-size: 0.85em; color: #666;">
+                    <div class="model-answer" id="gemini-answer" style="white-space: pre-wrap;"></div>
+                    <div id="backup-info" style="margin-top: 10px; padding: 8px; background: #f0f9ff; border-radius: 8px; font-size: 0.85em; color: #666;">
                         💡 <strong>FREE Models:</strong> Llama 70B, DeepSeek, Qwen, Gemini (auto-fallback if rate limited)
                     </div>
                 </div>
@@ -483,21 +483,30 @@
                             const geminiCard = document.getElementById('gemini-card');
                             const backupBadge = document.getElementById('backup-badge');
                             const backupName = document.getElementById('backup-model-name');
+                            const backupInfo = document.getElementById('backup-info');
                             
                             geminiCard.style.display = 'block';
                             document.getElementById('gemini-answer').textContent = data.gemini_backup;
                             
-                            // Update model name and badge
-                            if (data.context_aware) {
+                            // Check if it's an error message
+                            if (data.gemini_backup.includes('⚠️') || data.gemini_backup.includes('Unavailable')) {
+                                backupName.textContent = '⚠️ FREE AI Backup';
+                                backupBadge.textContent = 'Setup Required';
+                                backupBadge.style.background = '#ff9800';
+                                geminiCard.style.borderLeftColor = '#ff9800';
+                                backupInfo.style.display = 'none';
+                            } else if (data.context_aware) {
                                 backupName.textContent = '🤖 FREE AI (Context-Aware)';
                                 backupBadge.textContent = 'ChatPDF-style';
                                 backupBadge.style.background = '#34a853';
                                 geminiCard.style.borderLeftColor = '#34a853';
+                                backupInfo.style.display = 'block';
                             } else {
                                 backupName.textContent = '🤖 FREE AI Backup';
                                 backupBadge.textContent = 'Comprehensive';
                                 backupBadge.style.background = '#fbbc04';
                                 geminiCard.style.borderLeftColor = '#fbbc04';
+                                backupInfo.style.display = 'block';
                             }
                         }, 700);
                     } else {

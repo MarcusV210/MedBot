@@ -195,7 +195,13 @@ Then open: **http://localhost:5000**
 - ✅ **RAG System** - Retrieves from Harrison's medical knowledge base
 - ✅ **Beautiful UI** - Modern gradient design with chat bubbles
 
-**Note:** First load downloads BioGPT (1.5GB) and Clinical-BERT (440MB) - one time only. FREE AI models stream from OpenRouter (no download needed).
+**Note:** First load downloads BioGPT (1.5GB) and Clinical-BERT (440MB) - one time only.
+
+**FREE AI Setup (Optional):**
+1. Get a FREE API key from: https://openrouter.ai/keys
+2. Update `OPENROUTER_API_KEY` in `app.py` (line 21)
+3. Restart the app
+4. Enjoy FREE backup AI (Llama 70B, DeepSeek, Qwen, Gemini)!
 
 **Example Conversation:**
 ```

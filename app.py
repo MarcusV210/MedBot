@@ -344,9 +344,11 @@ def ask():
         # Determine if it's context-aware
         is_context_aware = references_context or len(session['chat_history']) > 0
         
-        # Use OpenRouter (Gemini Flash) as backup with full chat history
+        # Use OpenRouter FREE models as backup with full chat history
         if needs_backup:
             try:
+                print(f"🔄 Activating FREE AI backup for question: {question[:50]}...")
+                
                 # Build conversation history for context-aware responses
                 messages = [
                     {"role": "system", "content": "You are a medical AI assistant. Provide accurate, comprehensive medical information. When users ask follow-up questions or reference previous topics, use the conversation history to give contextual answers."}
@@ -363,17 +365,34 @@ def ask():
                 backup_answer = call_openrouter(messages)
                 
                 if backup_answer:
+                    print(f"✓ FREE AI backup successful! Length: {len(backup_answer)} chars")
                     answers['gemini_backup'] = backup_answer
                     answers['used_backup'] = True
                     answers['context_aware'] = is_context_aware
                 else:
-                    answers['used_backup'] = False
+                    print("✗ FREE AI backup returned None - API key may be invalid or models rate limited")
+                    # Provide a helpful fallback message
+                    answers['gemini_backup'] = """⚠️ FREE AI Backup Unavailable
+
+The OpenRouter API key needs to be updated. To enable FREE AI backup:
+
+1. Get a FREE API key from: https://openrouter.ai/keys
+2. Update OPENROUTER_API_KEY in app.py (line 21)
+3. Restart the app
+
+The 3 base models above (BioGPT, Clinical-BERT, Baseline LSTM) provide comprehensive medical information from Harrison's textbook."""
+                    answers['used_backup'] = True  # Show the card with the message
                     answers['context_aware'] = False
             except Exception as e:
-                print(f"Backup failed: {e}")
+                print(f"✗ Backup failed with exception: {e}")
+                import traceback
+                traceback.print_exc()
                 answers['used_backup'] = False
+                answers['context_aware'] = False
         else:
+            print("⚠ Backup not triggered (this shouldn't happen)")
             answers['used_backup'] = False
+            answers['context_aware'] = False
         
         # Add to chat history
         best_answer = answers.get('gemini_backup', answers['clinbert'])
