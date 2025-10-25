@@ -147,19 +147,13 @@ def create_stunning_css():
     </style>
     """
 # Orphaned CSS commented out to fix syntax errors
-"""
-The following CSS was orphaned outside of Python strings.
-It has been commented out to prevent syntax errors.
-All CSS is now properly contained in the create_stunning_css() function.
-"""
+# CSS cleanup completed
 
 # @keyframes shine {
 #         0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
 #         100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 # }
-"""
-Orphaned CSS block - commented out to prevent syntax errors
-All CSS styling is now properly contained in the create_stunning_css() function above.
+# Orphaned CSS block removed
 
 /* Glassmorphism cards */
 .glass-card {
@@ -337,8 +331,6 @@ All CSS styling is now properly contained in the create_stunning_css() function 
     footer {visibility: hidden;}
     header {visibility: hidden;}
     </style>
-"""
-
 def extract_text_from_pdf(pdf_path):
     """Extract text from PDF file - like ChatPDF"""
     if not PDF_AVAILABLE:
