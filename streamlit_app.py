@@ -48,9 +48,9 @@ def load_models():
         # Setup ChromaDB
         chroma = chromadb.Client()
         try:
-            collection = chroma.get_collection("medbot_kb")
+            collection = chroma.get_collection("medbot_kb_v2")
         except:
-            collection = chroma.create_collection("medbot_kb")
+            collection = chroma.create_collection("medbot_kb_v2")
             
             # Medical knowledge base
             medical_knowledge = [
@@ -119,21 +119,36 @@ def call_github_models(messages, temperature=0.7):
     return "❌ All GitHub AI models are currently unavailable. Please try again later."
 
 def generate_rag_answer(question, emb_model, collection):
-    """Generate RAG answer"""
+    """Generate RAG answer with improved retrieval"""
     try:
-        # Retrieve context from RAG
+        # Clear cache and recreate collection if needed
+        question_lower = question.lower()
+        
+        # Retrieve context from RAG with better matching
         qemb = emb_model.encode([question])
-        res = collection.query(query_embeddings=qemb.tolist(), n_results=1)  # Get only the most relevant
+        res = collection.query(query_embeddings=qemb.tolist(), n_results=3)
         
         if res['documents'] and res['documents'][0]:
-            # Get the single most relevant document
-            most_relevant = res['documents'][0][0]
+            # Get all results and find the best match
+            all_docs = res['documents'][0]
             
-            # Return the most relevant medical context
-            if len(most_relevant) > 800:
-                rag_answer = most_relevant[:800] + "..."
+            # Simple keyword matching to improve relevance
+            best_match = None
+            for doc in all_docs:
+                doc_lower = doc.lower()
+                if any(keyword in doc_lower for keyword in question_lower.split()):
+                    best_match = doc
+                    break
+            
+            # If no keyword match, use the first (most similar by embedding)
+            if not best_match:
+                best_match = all_docs[0]
+            
+            # Return the best match
+            if len(best_match) > 800:
+                rag_answer = best_match[:800] + "..."
             else:
-                rag_answer = most_relevant
+                rag_answer = best_match
                 
             return rag_answer if rag_answer.strip() else "No relevant medical information found."
         else:
@@ -143,25 +158,73 @@ def generate_rag_answer(question, emb_model, collection):
         return f"RAG system error: {e}"
 
 def main():
-    # Header
-    st.title("🏥 MedBot - Medical AI Assistant")
-    st.markdown("**RAG + Medical Transformers + GitHub AI • Semantic Similarity Evaluated**")
+    # Custom CSS for better styling
+    st.markdown("""
+    <style>
+    .main-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 10px;
+        color: white;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .component-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: 1rem 0;
+        border-left: 4px solid #667eea;
+    }
+    .rag-card {
+        border-left-color: #9b59b6;
+    }
+    .github-card {
+        border-left-color: #667eea;
+    }
+    .accuracy-badge {
+        background: #4CAF50;
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     
-    # Sidebar
+    # Header with gradient background
+    st.markdown("""
+    <div class="main-header">
+        <h1>🏥 MedBot - Medical AI Assistant</h1>
+        <p>RAG + Medical Transformers + GitHub AI • Semantic Similarity Evaluated</p>
+        <p><strong>Developer:</strong> Anamay | <strong>Accuracy:</strong> RAG 83.9% • GitHub AI 77.0%</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Sidebar with better styling
     with st.sidebar:
-        st.header("📊 System Info")
+        st.markdown("### 📊 System Performance")
+        
+        # Performance metrics with badges
         st.markdown("""
-        **Components:**
-        - 🥇 RAG System: 83.9% accuracy
-        - 🥈 GitHub AI: 77.0% accuracy
-        - 🥉 BioGPT: 60.1% accuracy
+        **🥇 RAG System:** <span class="accuracy-badge">83.9%</span>  
+        *Direct Harrison's textbook retrieval*
         
-        **Evaluation:** Semantic similarity vs medical literature
+        **🥈 GitHub AI:** <span class="accuracy-badge">77.0%</span>  
+        *Context-aware comprehensive synthesis*
         
-        **Knowledge Base:** Harrison's Principles of Internal Medicine
-        """)
+        **🥉 BioGPT:** <span class="accuracy-badge">60.1%</span>  
+        *Medical text generation (1.5B params)*
+        """, unsafe_allow_html=True)
         
-        if st.button("🔄 Clear Chat History"):
+        st.markdown("---")
+        st.markdown("**📚 Knowledge Base:** Harrison's Principles of Internal Medicine")
+        st.markdown("**📊 Evaluation:** Semantic similarity vs medical literature")
+        
+        st.markdown("---")
+        if st.button("🔄 Clear Chat History", use_container_width=True):
             st.session_state.chat_history = []
             st.rerun()
     
@@ -178,22 +241,34 @@ def main():
                 st.error("❌ Failed to load models")
                 return
     
-    # Chat interface
-    st.header("💬 Ask a Medical Question")
+    # Chat interface with better layout
+    col1, col2 = st.columns([2, 1])
     
-    # Display chat history
-    if st.session_state.chat_history:
-        st.subheader("📝 Conversation History")
-        for i, (q, answers) in enumerate(st.session_state.chat_history[-5:]):  # Show last 5
-            with st.expander(f"Q{i+1}: {q[:50]}..."):
-                st.markdown(f"**Question:** {q}")
-                for component, answer in answers.items():
-                    st.markdown(f"**{component}:** {answer[:200]}...")
+    with col1:
+        st.markdown("### 💬 Ask a Medical Question")
+        
+        # Question input with better styling
+        question = st.text_input(
+            "Enter your medical question:",
+            placeholder="e.g., What causes diabetes? What is cancer? What causes hypertension?",
+            help="Ask any medical question and get responses from multiple AI systems"
+        )
+        
+        ask_button = st.button("🔍 Ask MedBot", type="primary", use_container_width=True)
     
-    # Question input
-    question = st.text_input("Enter your medical question:", placeholder="e.g., What causes diabetes?")
+    with col2:
+        # Chat history in sidebar column
+        if st.session_state.chat_history:
+            st.markdown("### 📝 Recent Questions")
+            for i, (q, answers) in enumerate(st.session_state.chat_history[-3:]):  # Show last 3
+                with st.expander(f"Q{i+1}: {q[:30]}..."):
+                    st.markdown(f"**Q:** {q}")
+                    if "RAG System" in answers:
+                        st.markdown(f"**RAG:** {answers['RAG System'][:100]}...")
+                    if "GitHub AI" in answers:
+                        st.markdown(f"**AI:** {answers['GitHub AI'][:100]}...")
     
-    if st.button("🔍 Ask MedBot") and question:
+    if ask_button and question:
         with st.spinner("Consulting medical AI models..."):
             # Generate answers
             answers = {}
@@ -212,20 +287,28 @@ def main():
                 github_answer = call_github_models(messages)
                 answers["GitHub AI"] = github_answer
             
-            # Display results
-            st.header("🎯 Medical AI Responses")
+            # Display results with improved cards
+            st.markdown("### 🎯 Medical AI Responses")
             
-            col1, col2 = st.columns(2)
+            # RAG System Response
+            st.markdown("""
+            <div class="component-card rag-card">
+                <h4>🥇 RAG System <span class="accuracy-badge">83.9%</span></h4>
+                <p><em>Direct retrieval from Harrison's Principles of Internal Medicine</em></p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown(answers["RAG System"])
             
-            with col1:
-                st.subheader("🥇 RAG System (83.9% accuracy)")
-                st.info("Direct retrieval from Harrison's Principles of Internal Medicine")
-                st.markdown(answers["RAG System"])
+            st.markdown("---")
             
-            with col2:
-                st.subheader("🥈 GitHub AI (77.0% accuracy)")
-                st.info("Context-aware comprehensive synthesis")
-                st.markdown(answers["GitHub AI"])
+            # GitHub AI Response
+            st.markdown("""
+            <div class="component-card github-card">
+                <h4>🥈 GitHub AI <span class="accuracy-badge">77.0%</span></h4>
+                <p><em>Context-aware comprehensive synthesis</em></p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.markdown(answers["GitHub AI"])
             
             # Add to chat history
             st.session_state.chat_history.append((question, answers))
