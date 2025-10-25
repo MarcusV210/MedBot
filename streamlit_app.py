@@ -65,22 +65,191 @@ FREE_MODELS = [
     "mistral-large-2411",
 ]
 
-def create_professional_css():
-    """Create professional, streamlined CSS"""
+def create_stunning_css():
+    """Create stunning, modern UI/UX"""
     return """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
     .main {
         font-family: 'Inter', sans-serif;
-        padding-top: 2rem;
+        padding: 0;
     }
     
-    /* Professional medical theme */
+    /* Stunning gradient background */
     .stApp {
-        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2d1b4e 100%);
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
         color: white;
+        overflow-x: hidden;
     }
+    
+    /* Animated background particles */
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+    }
+    
+    /* Glassmorphism containers */
+    .glass-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Floating sidebar */
+    .floating-sidebar {
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 300px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: all 0.3s ease;
+    }
+    
+    /* Neon glow effects */
+    .neon-glow {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
+                    0 0 40px rgba(59, 130, 246, 0.2),
+                    0 0 60px rgba(59, 130, 246, 0.1);
+        animation: pulse-glow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes pulse-glow {
+        from { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.2); }
+        to { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.3); }
+    }
+    
+    /* Enhanced buttons */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 1rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stButton > button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .stButton > button:hover::before {
+        left: 100%;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Enhanced text inputs */
+    .stTextArea > div > div > textarea {
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-radius: 15px;
+        padding: 1.5rem;
+        font-size: 1rem;
+        color: white;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .stTextArea > div > div > textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 25px rgba(102, 126, 234, 0.4);
+        transform: scale(1.01);
+    }
+    
+    /* Animated metrics */
+    .metric-card {
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+        animation: shine 3s infinite;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    @keyframes shine {
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+    
+    /* Hide Streamlit elements */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stDeployButton {display: none;}
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #764ba2, #667eea);
+    }
+    </style>
+    """
     
     /* Animated header */
     .hero-header {
@@ -677,8 +846,8 @@ def create_professional_metrics():
         """, unsafe_allow_html=True)
 
 def main():
-    # Apply professional CSS
-    st.markdown(create_professional_css(), unsafe_allow_html=True)
+    # Apply stunning CSS
+    st.markdown(create_stunning_css(), unsafe_allow_html=True)
     
     # Professional header
     st.markdown("""
@@ -736,91 +905,112 @@ def main():
                 st.error("❌ Failed to load models")
                 return
     
-    # ===== MAIN CONSULTATION INTERFACE =====
+    # ===== STUNNING HERO SECTION =====
     st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%); 
-                padding: 2rem; border-radius: 16px; margin: 2rem 0; 
-                border: 1px solid rgba(59, 130, 246, 0.2); backdrop-filter: blur(10px);">
-        <h2 style="text-align: center; color: #3b82f6; margin-bottom: 1rem; font-size: 2rem; font-weight: 600;">
-            💬 Medical Consultation
-        </h2>
-        <p style="text-align: center; opacity: 0.8; font-size: 1.1rem; margin-bottom: 0; color: #e8eaed;">
-            RAG vs AI Comparison • Evidence-based Medical Answers
+    <div class="glass-container neon-glow" style="padding: 3rem 2rem; margin: 2rem 0; text-align: center;">
+        <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 1rem; 
+                   background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                   background-clip: text;">
+            💬 Medical AI Consultation
+        </h1>
+        <p style="font-size: 1.3rem; opacity: 0.9; margin-bottom: 1rem; color: #e8eaed;">
+            Advanced RAG System vs GitHub AI Models
         </p>
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <span style="background: rgba(16, 185, 129, 0.2); padding: 0.5rem 1rem; border-radius: 25px; 
+                        border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.9rem;">
+                📚 Harrison's Textbook RAG
+            </span>
+            <span style="background: rgba(59, 130, 246, 0.2); padding: 0.5rem 1rem; border-radius: 25px; 
+                        border: 1px solid rgba(59, 130, 246, 0.3); font-size: 0.9rem;">
+                🤖 GitHub AI Models
+            </span>
+            <span style="background: rgba(147, 51, 234, 0.2); padding: 0.5rem 1rem; border-radius: 25px; 
+                        border: 1px solid rgba(147, 51, 234, 0.3); font-size: 0.9rem;">
+                📊 Semantic Analysis
+            </span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Create main layout with proper alignment
-    main_col1, main_col2 = st.columns([2, 1], gap="large")
+    # ===== MAIN CONTENT AREA (FULL WIDTH) =====
+    # Create floating sidebar
+    sidebar_placeholder = st.empty()
     
-    with main_col1:
-        # PDF Upload Section
-        with st.expander("📚 Upload Harrison's Textbook PDF (Optional)", expanded=False):
-            st.markdown("**For Full RAG Implementation:** Upload Harrison's PDF for complete textbook retrieval.")
-            
+    # PDF Upload Section (Compact)
+    with st.expander("📚 Upload Harrison's Textbook PDF", expanded=False):
+        col_pdf1, col_pdf2 = st.columns([2, 1])
+        with col_pdf1:
             if os.path.exists("uploaded_harrison.pdf"):
-                st.success("✅ Harrison's textbook PDF ready!")
-                if st.button("🗑️ Remove PDF"):
-                    os.remove("uploaded_harrison.pdf")
-                    st.success("PDF removed. Please restart the app.")
-                    st.rerun()
+                st.success("✅ Harrison's PDF ready!")
             else:
-                uploaded_file = st.file_uploader("Choose Harrison's PDF", type=['pdf'])
-                if uploaded_file is not None:
-                    if st.button("🔄 Process PDF for RAG"):
-                        with st.spinner("📖 Processing Harrison's textbook..."):
-                            chunks, text_length = process_uploaded_pdf(uploaded_file)
-                            if chunks:
-                                st.success(f"✅ Processed {len(chunks)} sections!")
-                                st.balloons()
-                            else:
-                                st.error("❌ Failed to extract text from PDF")
-        
-        # Question Input
-        st.markdown("### 🔍 Enter Your Medical Question")
-        question = st.text_area(
-            "",
-            placeholder="Type your medical question here...\n\nExamples:\n• What are the symptoms and treatment of hypertension?\n• Explain the pathophysiology of diabetes mellitus\n• What are the risk factors for cardiovascular disease?",
-            height=120,
-            help="Ask detailed medical questions for comprehensive, evidence-based answers",
-            key="main_question",
-            label_visibility="collapsed"
-        )
-        
-        # Consultation Button
-        ask_button = st.button("🩺 Start Medical Consultation", type="primary", use_container_width=True)
+                uploaded_file = st.file_uploader("Choose PDF", type=['pdf'], label_visibility="collapsed")
+        with col_pdf2:
+            if os.path.exists("uploaded_harrison.pdf"):
+                if st.button("🗑️ Remove"):
+                    os.remove("uploaded_harrison.pdf")
+                    st.rerun()
+            elif 'uploaded_file' in locals() and uploaded_file is not None:
+                if st.button("🔄 Process"):
+                    with st.spinner("Processing..."):
+                        chunks, text_length = process_uploaded_pdf(uploaded_file)
+                        if chunks:
+                            st.success("✅ Processed!")
+                            st.balloons()
     
-    with main_col2:
-        # System Status Card
+    # Enhanced Question Input
+    st.markdown("""
+    <div class="glass-container" style="padding: 2rem; margin: 2rem 0;">
+        <h3 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600;">
+            🔍 Enter Your Medical Question
+        </h3>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    question = st.text_area(
+        "",
+        placeholder="🩺 Ask your medical question here...\n\n💡 Examples:\n• What is the pathophysiology of myocardial infarction?\n• Explain the treatment options for diabetes mellitus\n• What are the risk factors for stroke?",
+        height=150,
+        help="Ask detailed medical questions for comprehensive analysis",
+        key="main_question",
+        label_visibility="collapsed"
+    )
+    
+    # Enhanced Consultation Button
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 3, 1])
+    with col_btn2:
+        ask_button = st.button("🚀 Start AI Medical Analysis", type="primary", use_container_width=True)
+    
+    # Floating Sidebar Content
+    with sidebar_placeholder.container():
         st.markdown("""
-        <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 12px; 
-                   border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 1rem;">
-            <h4 style="color: #3b82f6; margin-top: 0; margin-bottom: 1rem;">🎯 System Status</h4>
-            <div style="margin: 0.8rem 0;">
-                <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+        <div style="position: fixed; right: 20px; top: 20px; width: 280px; 
+                   background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(25px); 
+                   border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; 
+                   padding: 1.5rem; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); z-index: 1000;">
+            <h4 style="color: #667eea; margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">🎯 System Status</h4>
+            <div style="margin: 1rem 0;">
+                <div style="display: flex; justify-content: space-between; margin: 0.7rem 0; font-size: 0.9rem;">
                     <span>🥇 RAG System:</span>
                     <span style="color: #10b981; font-weight: 600;">ACTIVE</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                    <span>🥈 GitHub AI:</span>
+                <div style="display: flex; justify-content: space-between; margin: 0.7rem 0; font-size: 0.9rem;">
+                    <span>🤖 GitHub AI:</span>
                     <span style="color: #3b82f6; font-weight: 600;">ACTIVE</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                    <span>📚 Knowledge Base:</span>
+                <div style="display: flex; justify-content: space-between; margin: 0.7rem 0; font-size: 0.9rem;">
+                    <span>📚 Database:</span>
                     <span style="color: #f59e0b; font-weight: 600;">LOADED</span>
                 </div>
             </div>
+            <hr style="border: 1px solid rgba(255, 255, 255, 0.1); margin: 1rem 0;">
+            <div style="font-size: 0.8rem; opacity: 0.7; text-align: center;">
+                <p style="margin: 0.5rem 0;">📊 Questions: {}</p>
+                <p style="margin: 0.5rem 0;">⚡ Session: Active</p>
+            </div>
         </div>
-        """, unsafe_allow_html=True)
-        
-        # Recent Questions
-        if st.session_state.chat_history:
-            st.markdown("### 📝 Recent Consultations")
-            for i, (q, answers) in enumerate(st.session_state.chat_history[-3:]):
-                with st.expander(f"Q{i+1}: {q[:30]}..."):
-                    st.markdown(f"**Question:** {q}")
-                    if "RAG System" in answers:
-                        st.markdown(f"**RAG:** {answers['RAG System'][:100]}...")
+        """.format(st.session_state.total_questions), unsafe_allow_html=True)
     
     # ===== NEW QUESTION PROCESSING =====
     # Process question and display results RIGHT HERE
@@ -892,25 +1082,35 @@ def main():
         # Add to chat history
         st.session_state.chat_history.append((question, answers))
         
-        # ===== PROFESSIONAL CONSULTATION RESULTS =====
-        st.markdown("---")
+        # ===== STUNNING RESULTS SECTION =====
         st.markdown("""
-        <div style="text-align: center; margin: 2rem 0;">
-            <h2 style="color: #3b82f6; margin-bottom: 1rem; font-size: 2.2rem; font-weight: 600;">
-                📋 Medical AI Consultation Results
+        <div class="glass-container neon-glow" style="padding: 3rem 2rem; margin: 3rem 0; text-align: center;">
+            <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; 
+                       background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6); 
+                       -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+                       background-clip: text;">
+                🎯 AI Analysis Results
             </h2>
-            <p style="opacity: 0.8; font-size: 1rem; color: #9aa0a6;">
-                RAG System vs GitHub AI Models • Comparative Analysis
+            <p style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 0; color: #e8eaed;">
+                Comparative Medical Intelligence • RAG vs AI Models
             </p>
         </div>
         """, unsafe_allow_html=True)
         
-        # Display question professionally
+        # Enhanced Question Display
         st.markdown(f"""
-        <div style="background: rgba(59, 130, 246, 0.08); padding: 1.5rem; border-radius: 12px; margin: 2rem 0; 
-                   border-left: 4px solid #3b82f6; font-size: 1.1rem; line-height: 1.6;">
-            <strong style="color: #3b82f6;">🔍 Patient Query:</strong><br>
-            {question}
+        <div class="glass-container" style="padding: 2rem; margin: 2rem 0; 
+                   background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));">
+            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <div style="background: #3b82f6; width: 40px; height: 40px; border-radius: 50%; 
+                           display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                    🔍
+                </div>
+                <h4 style="margin: 0; color: #3b82f6; font-size: 1.3rem; font-weight: 600;">Patient Query</h4>
+            </div>
+            <p style="font-size: 1.1rem; line-height: 1.6; margin: 0; color: #e8eaed;">
+                {question}
+            </p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -937,76 +1137,78 @@ def main():
             github_confidence = 55.0
         github_confidence = min(88.0, github_confidence)
         
+        # ===== STUNNING ANSWER CARDS =====
+        st.markdown("### ⚖️ Comparative Intelligence Analysis")
+        
         with resp_col1:
-            # RAG System Card
+            # Enhanced RAG System Card
             st.markdown(f"""
-            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); 
-                       border-radius: 12px; padding: 1.5rem; height: auto; margin-bottom: 1rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h4 style="margin: 0; color: #10b981; font-size: 1.1rem; font-weight: 600;">
-                        📖 RAG System
-                    </h4>
-                    <span style="background: #10b981; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; 
-                                font-size: 0.75rem; font-weight: 600;">
-                        {rag_confidence:.1f}%
-                    </span>
+            <div class="glass-container" style="padding: 0; margin-bottom: 2rem; overflow: hidden; 
+                       background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));">
+                <div style="background: linear-gradient(135deg, #10b981, #059669); padding: 1.5rem; color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center;">
+                            <div style="background: rgba(255,255,255,0.2); width: 40px; height: 40px; 
+                                       border-radius: 50%; display: flex; align-items: center; 
+                                       justify-content: center; margin-right: 1rem; font-size: 1.2rem;">
+                                📖
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; font-size: 1.2rem; font-weight: 700;">RAG System</h4>
+                                <p style="margin: 0; opacity: 0.9; font-size: 0.85rem;">Harrison's Textbook</p>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; 
+                                   border-radius: 20px; font-weight: 700; font-size: 0.9rem;">
+                            {rag_confidence:.1f}%
+                        </div>
+                    </div>
                 </div>
-                <p style="margin: 0; opacity: 0.8; font-size: 0.85rem; color: #9aa0a6;">
-                    Harrison's Principles of Internal Medicine
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # RAG Answer Display
-            if "Source: Harrison's" in rag_answer:
-                source_indicator = "✅ Verified Harrison's Content"
-                border_color = "#10b981"
-                bg_color = "rgba(16, 185, 129, 0.05)"
-            else:
-                source_indicator = "⚠️ No Harrison's Match Found"
-                border_color = "#f59e0b"
-                bg_color = "rgba(245, 158, 11, 0.05)"
-                
-            st.markdown(f"""
-            <div style="background: {bg_color}; padding: 1.8rem; border-radius: 12px; 
-                       border-left: 4px solid {border_color}; margin-bottom: 0.5rem; font-size: 0.95rem; 
-                       line-height: 1.6; color: #e8eaed; min-height: 200px;">
-                {rag_answer}
-            </div>
-            <div style="text-align: right; font-size: 0.75rem; color: #9aa0a6; margin-bottom: 1rem;">
-                {source_indicator}
+                <div style="padding: 2rem; background: rgba(16, 185, 129, 0.03);">
+                    <div style="font-size: 1rem; line-height: 1.7; color: #e8eaed;">
+                        {rag_answer}
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); 
+                               text-align: right; font-size: 0.8rem; opacity: 0.7;">
+                        {"✅ Verified Harrison's Content" if "Source: Harrison's" in rag_answer else "⚠️ No Harrison's Match"}
+                    </div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
         
         with resp_col2:
-            # GitHub AI System Card
+            # Enhanced GitHub AI Card
             st.markdown(f"""
-            <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); 
-                       border-radius: 12px; padding: 1.5rem; height: auto; margin-bottom: 1rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h4 style="margin: 0; color: #3b82f6; font-size: 1.1rem; font-weight: 600;">
-                        🤖 GitHub AI
-                    </h4>
-                    <span style="background: #3b82f6; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; 
-                                font-size: 0.75rem; font-weight: 600;">
-                        {github_confidence:.1f}%
-                    </span>
+            <div class="glass-container" style="padding: 0; margin-bottom: 2rem; overflow: hidden; 
+                       background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));">
+                <div style="background: linear-gradient(135deg, #3b82f6, #2563eb); padding: 1.5rem; color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center;">
+                            <div style="background: rgba(255,255,255,0.2); width: 40px; height: 40px; 
+                                       border-radius: 50%; display: flex; align-items: center; 
+                                       justify-content: center; margin-right: 1rem; font-size: 1.2rem;">
+                                🤖
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; font-size: 1.2rem; font-weight: 700;">GitHub AI</h4>
+                                <p style="margin: 0; opacity: 0.9; font-size: 0.85rem;">AI Medical Knowledge</p>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; 
+                                   border-radius: 20px; font-weight: 700; font-size: 0.9rem;">
+                            {github_confidence:.1f}%
+                        </div>
+                    </div>
                 </div>
-                <p style="margin: 0; opacity: 0.8; font-size: 0.85rem; color: #9aa0a6;">
-                    Independent AI Medical Knowledge
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # GitHub AI Answer Display
-            st.markdown(f"""
-            <div style="background: rgba(59, 130, 246, 0.05); padding: 1.8rem; border-radius: 12px; 
-                       border-left: 4px solid #3b82f6; margin-bottom: 0.5rem; font-size: 0.95rem; 
-                       line-height: 1.6; color: #e8eaed; min-height: 200px;">
-                {github_answer}
-            </div>
-            <div style="text-align: right; font-size: 0.75rem; color: #9aa0a6; margin-bottom: 1rem;">
-                🤖 AI Generated Response
+                <div style="padding: 2rem; background: rgba(59, 130, 246, 0.03);">
+                    <div style="font-size: 1rem; line-height: 1.7; color: #e8eaed;">
+                        {github_answer}
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); 
+                               text-align: right; font-size: 0.8rem; opacity: 0.7;">
+                        🤖 AI Generated Response
+                    </div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
             st.markdown(f"""
@@ -1036,44 +1238,61 @@ def main():
             </div>
             """, unsafe_allow_html=True)
         
-        # Professional consultation summary with perfect alignment
-        st.markdown("---")
-        st.markdown("### 📊 Consultation Summary")
+        # ===== STUNNING METRICS DASHBOARD =====
+        st.markdown("""
+        <div class="glass-container" style="padding: 2rem; margin: 3rem 0;">
+            <h3 style="text-align: center; color: #667eea; margin-bottom: 2rem; font-size: 1.5rem; font-weight: 600;">
+                📊 Performance Analytics
+            </h3>
+        </div>
+        """, unsafe_allow_html=True)
         
-        # Create perfectly aligned metrics
+        # Enhanced Metrics Cards
         metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4, gap="medium")
         
         with metric_col1:
-            st.metric(
-                label="⏱️ Response Time",
-                value=f"{response_time:.2f}s",
-                delta=None,
-                help="Time taken to generate both responses"
-            )
+            st.markdown(f"""
+            <div class="metric-card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⏱️</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: #f59e0b; margin-bottom: 0.3rem;">
+                    {response_time:.2f}s
+                </div>
+                <div style="font-size: 0.9rem; opacity: 0.8;">Response Time</div>
+            </div>
+            """, unsafe_allow_html=True)
         
         with metric_col2:
-            st.metric(
-                label="📖 RAG Quality",
-                value=f"{rag_confidence:.1f}%",
-                delta=None,
-                help="Quality of Harrison's textbook retrieval"
-            )
+            st.markdown(f"""
+            <div class="metric-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📖</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: #10b981; margin-bottom: 0.3rem;">
+                    {rag_confidence:.1f}%
+                </div>
+                <div style="font-size: 0.9rem; opacity: 0.8;">RAG Quality</div>
+            </div>
+            """, unsafe_allow_html=True)
         
         with metric_col3:
-            st.metric(
-                label="🤖 AI Quality",
-                value=f"{github_confidence:.1f}%",
-                delta=None,
-                help="Quality of GitHub AI response"
-            )
+            st.markdown(f"""
+            <div class="metric-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🤖</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.3rem;">
+                    {github_confidence:.1f}%
+                </div>
+                <div style="font-size: 0.9rem; opacity: 0.8;">AI Quality</div>
+            </div>
+            """, unsafe_allow_html=True)
         
         with metric_col4:
-            st.metric(
-                label="📋 Total Questions",
-                value=st.session_state.total_questions,
-                delta=1,
-                help="Questions asked in this session"
-            )
+            st.markdown(f"""
+            <div class="metric-card" style="background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(147, 51, 234, 0.05));">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📋</div>
+                <div style="font-size: 1.8rem; font-weight: 700; color: #9333ea; margin-bottom: 0.3rem;">
+                    {st.session_state.total_questions}
+                </div>
+                <div style="font-size: 0.9rem; opacity: 0.8;">Total Questions</div>
+            </div>
+            """, unsafe_allow_html=True)
         
         # Professional disclaimer
         st.markdown("""
