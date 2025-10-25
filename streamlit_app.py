@@ -562,6 +562,10 @@ def main():
     if st.session_state.chat_history:
         latest_question, latest_answers = st.session_state.chat_history[-1]
         
+        # DEBUG: Show what we have
+        st.write("🔍 DEBUG - Latest Question:", latest_question)
+        st.write("🔍 DEBUG - Answer Keys:", list(latest_answers.keys()) if latest_answers else "No answers")
+        
         # Display the latest Q&A prominently
         st.markdown("""
         <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.2) 0%, rgba(102, 126, 234, 0.2) 100%); 
@@ -601,15 +605,19 @@ def main():
             </div>
             """, unsafe_allow_html=True)
             
-            # Display RAG answer
+            # Display RAG answer - ALWAYS SHOW SOMETHING
             if "RAG System" in latest_answers:
+                rag_text = latest_answers["RAG System"]
                 st.markdown(f"""
                 <div style="background: rgba(155, 89, 182, 0.15); padding: 2.5rem; border-radius: 15px; 
                            border-left: 6px solid #9b59b6; margin-bottom: 2rem; font-size: 1.1rem; 
                            line-height: 1.6; box-shadow: 0 10px 30px rgba(155, 89, 182, 0.2);">
-                    {latest_answers["RAG System"]}
+                    {rag_text}
                 </div>
                 """, unsafe_allow_html=True)
+            else:
+                st.error("❌ RAG System answer not found in latest_answers")
+                st.write("Available keys:", list(latest_answers.keys()))
         
         with resp_col2:
             # GitHub AI Response - USE REAL ACCURACY
@@ -624,15 +632,19 @@ def main():
             </div>
             """, unsafe_allow_html=True)
             
-            # Display GitHub AI answer
+            # Display GitHub AI answer - ALWAYS SHOW SOMETHING
             if "GitHub AI" in latest_answers:
+                github_text = latest_answers["GitHub AI"]
                 st.markdown(f"""
                 <div style="background: rgba(102, 126, 234, 0.15); padding: 2.5rem; border-radius: 15px; 
                            border-left: 6px solid #667eea; margin-bottom: 2rem; font-size: 1.1rem; 
                            line-height: 1.6; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);">
-                    {latest_answers["GitHub AI"]}
+                    {github_text}
                 </div>
                 """, unsafe_allow_html=True)
+            else:
+                st.error("❌ GitHub AI answer not found in latest_answers")
+                st.write("Available keys:", list(latest_answers.keys()))
     
     # ===== NEW QUESTION PROCESSING =====
     # Process question and display results RIGHT HERE
