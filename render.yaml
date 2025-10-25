@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: medbot
+    env: python
+    buildCommand: pip install -r requirements_web.txt
+    startCommand: python app.py
+    envVars:
+      - key: GITHUB_TOKEN
+        sync: false
+    plan: free
