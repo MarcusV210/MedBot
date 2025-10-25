@@ -54,6 +54,7 @@ def load_models():
             
             # Medical knowledge base
             medical_knowledge = [
+                # Hypertension
                 "Essential hypertension results from a combination of genetic and environmental factors that affect cardiac output and systemic vascular resistance. Mechanisms include increased sympathetic nervous system activity, altered renal sodium handling leading to volume expansion, endothelial dysfunction with reduced nitric oxide bioavailability, vascular remodeling and increased arterial stiffness, and activation of the renin-angiotensin-aldosterone system (RAAS) contributing to vasoconstriction and sodium retention.",
                 "Hypertension management involves lifestyle modifications including salt restriction to less than 2.3g sodium daily, weight loss if overweight, regular aerobic exercise, and pharmacologic therapy. First-line medications include ACE inhibitors, ARBs, calcium channel blockers, and thiazide diuretics. The goal is to reduce cardiovascular and renal complications by maintaining blood pressure below 130/80 mmHg.",
                 "Congestive heart failure occurs when the heart cannot maintain adequate cardiac output to meet the body's metabolic demands. Pathophysiologically, it involves systolic dysfunction with reduced ejection fraction or diastolic dysfunction with preserved ejection fraction. This leads to increased ventricular filling pressures, pulmonary or systemic congestion, and compensatory mechanisms including neurohormonal activation. Clinical manifestations include dyspnea on exertion, orthopnea, paroxysmal nocturnal dyspnea, peripheral edema, fatigue, and exercise intolerance.",
@@ -65,6 +66,7 @@ def load_models():
                 "Type 2 diabetes management includes lifestyle modification with medical nutrition therapy, weight loss of 5-10% if overweight, and regular physical activity. Pharmacologic therapy starts with metformin as first-line therapy, followed by SGLT2 inhibitors for cardiovascular benefits, GLP-1 receptor agonists for weight loss, DPP-4 inhibitors, and insulin therapy when necessary to achieve glycemic control with HbA1c target less than 7% in most patients.",
                 "Acute myocardial infarction results from rupture or erosion of an atherosclerotic plaque leading to thrombotic occlusion of a coronary artery and myocardial necrosis. ST-elevation MI involves complete occlusion while non-ST elevation MI involves partial occlusion. Diagnosis requires at least two of the following: clinical symptoms of chest pain, ECG changes including ST elevation or depression and T-wave inversions, and elevated cardiac biomarkers particularly troponin I or T.",
                 "Acute MI treatment involves immediate reperfusion therapy with primary percutaneous coronary intervention preferred within 90 minutes or thrombolytic therapy with alteplase if PCI unavailable within 120 minutes. Adjunctive therapy includes dual antiplatelet therapy with aspirin and clopidogrel, anticoagulation with heparin, beta-blockers for mortality reduction, ACE inhibitors for ventricular remodeling prevention, and high-intensity statins for plaque stabilization.",
+                "Cancer is a group of diseases characterized by uncontrolled cell growth and spread to other parts of the body. Common types include lung cancer, breast cancer, colorectal cancer, prostate cancer, and skin cancer. Risk factors include tobacco use, alcohol consumption, poor diet, physical inactivity, obesity, infections, radiation exposure, and genetic predisposition. Early detection through screening improves outcomes. Cancer treatment depends on type, stage, and patient factors. Options include surgery for localized tumors, chemotherapy using cytotoxic drugs, radiation therapy, targeted therapy against specific molecular targets, immunotherapy to enhance immune response, and hormone therapy for hormone-sensitive cancers.",
                 "Pneumonia is acute infection of the alveolar spaces and lung parenchyma typically caused by bacteria like Streptococcus pneumoniae, Haemophilus influenzae, or atypical organisms like Mycoplasma pneumoniae. Symptoms include fever, productive cough with purulent sputum, pleuritic chest pain, and dyspnea. Diagnosis is based on clinical presentation, chest X-ray showing consolidation, and laboratory findings including elevated white blood cell count.",
             ]
             
@@ -121,19 +123,22 @@ def generate_rag_answer(question, emb_model, collection):
     try:
         # Retrieve context from RAG
         qemb = emb_model.encode([question])
-        res = collection.query(query_embeddings=qemb.tolist(), n_results=3)
-        context = res['documents'][0]
+        res = collection.query(query_embeddings=qemb.tolist(), n_results=1)  # Get only the most relevant
         
-        # Combine contexts
-        full_context = ' '.join(context)
-        
-        # Return the actual retrieved medical context
-        if len(full_context) > 800:
-            rag_answer = full_context[:800] + "..."
-        else:
-            rag_answer = full_context
+        if res['documents'] and res['documents'][0]:
+            # Get the single most relevant document
+            most_relevant = res['documents'][0][0]
             
-        return rag_answer if rag_answer.strip() else "No relevant medical information found."
+            # Return the most relevant medical context
+            if len(most_relevant) > 800:
+                rag_answer = most_relevant[:800] + "..."
+            else:
+                rag_answer = most_relevant
+                
+            return rag_answer if rag_answer.strip() else "No relevant medical information found."
+        else:
+            return "No relevant medical information found in the knowledge base."
+            
     except Exception as e:
         return f"RAG system error: {e}"
 
