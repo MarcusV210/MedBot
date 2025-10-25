@@ -213,6 +213,7 @@ def load_harrison_pdf():
         "medical_textbook.pdf",
         "docs/harrison_textbook.pdf",
         "data/harrison_textbook.pdf",
+        "data/Harrison's Principles of Internal Medicine 21st Edition.pdf",  # Your actual PDF
         "uploaded_harrison.pdf"  # For uploaded files
     ]
     

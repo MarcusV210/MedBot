@@ -1,23 +1,41 @@
 # Environment variables
 .env
+.env.local
 
 # Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.pytest_cache/
 
 # Model files (large)
 *.pth
 *.pkl
+*.bin
 
-# Data files
-data/
+# Uploaded PDFs (can be large)
+uploaded_harrison.pdf
+temp_*.pdf
+
+# Streamlit
+.streamlit/
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+ENV/
