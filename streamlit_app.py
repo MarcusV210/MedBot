@@ -223,21 +223,48 @@ def create_custom_css():
         100% { transform: rotate(360deg); }
     }
     
+    /* Large input field styling */
+    .stTextInput > div > div > input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        border-radius: 15px;
+        padding: 1.5rem 2rem;
+        font-size: 1.2rem;
+        color: white;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+        transform: scale(1.02);
+    }
+    
+    .stTextInput > div > div > input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1.1rem;
+    }
+    
     /* Button styling */
     .stButton > button {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
         border-radius: 25px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
+        padding: 1.2rem 3rem;
+        font-weight: 700;
+        font-size: 1.2rem;
         transition: all 0.3s ease;
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     
     .stButton > button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 45px rgba(102, 126, 234, 0.6);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
     }
     
     /* Sidebar styling */
@@ -486,15 +513,7 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
-    # Live metrics dashboard
-    st.markdown("### 📊 Live Performance Dashboard")
-    create_live_metrics()
-    
-    # Performance charts
-    st.markdown("### 📈 Real-Time Analytics")
-    chart_placeholder = st.empty()
-    
-    # Load models
+    # Load models first
     if not st.session_state.models_loaded:
         with st.spinner("🚀 Loading medical AI models..."):
             emb_model, collection = load_models()
@@ -507,27 +526,43 @@ def main():
                 st.error("❌ Failed to load models")
                 return
     
-    # Update charts
-    with chart_placeholder.container():
-        fig = create_performance_charts()
-        st.plotly_chart(fig, use_container_width=True)
+    # MAIN Q&A INTERFACE - PROMINENT AND FULL WIDTH
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(155, 89, 182, 0.15) 100%); 
+                padding: 3rem 2rem; border-radius: 20px; margin: 2rem 0; 
+                border: 1px solid rgba(102, 126, 234, 0.3); backdrop-filter: blur(20px);">
+        <h1 style="text-align: center; color: #667eea; margin-bottom: 2rem; font-size: 2.5rem;">
+            💬 Ask Your Medical Question
+        </h1>
+        <p style="text-align: center; opacity: 0.8; font-size: 1.2rem; margin-bottom: 2rem;">
+            Get instant answers from Harrison's Medical Textbook + Advanced AI
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Main interface
-    col1, col2 = st.columns([2, 1])
+    # Question input - LARGE and PROMINENT
+    question = st.text_input(
+        "",
+        placeholder="🔍 Type your medical question here... (e.g., What is cancer? What causes diabetes? What is hypertension?)",
+        help="Ask any medical question and get responses from multiple AI systems with real-time accuracy tracking",
+        key="main_question",
+        label_visibility="collapsed"
+    )
     
-    with col1:
-        st.markdown("### 💬 Medical AI Consultation")
-        
-        # Question input with enhanced styling
-        question = st.text_input(
-            "🔍 Enter your medical question:",
-            placeholder="e.g., What is cancer? What causes diabetes? What is hypertension?",
-            help="Ask any medical question and get responses from multiple AI systems with real-time accuracy tracking"
-        )
-        
-        ask_button = st.button("🚀 Consult Medical AI", type="primary", use_container_width=True)
+    # Large, prominent button
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+    with col_btn2:
+        ask_button = st.button("🚀 GET MEDICAL AI ANSWERS", type="primary", use_container_width=True)
     
-    with col2:
+    # Live metrics dashboard - BELOW Q&A
+    st.markdown("---")
+    st.markdown("### 📊 Live Performance Dashboard")
+    create_live_metrics()
+    
+    # Sidebar info in columns
+    col_info1, col_info2 = st.columns([2, 1])
+    
+    with col_info2:
         # Enhanced sidebar with glassmorphism
         st.markdown("""
         <div class="glass-card">
@@ -557,6 +592,12 @@ def main():
                     st.markdown(f"**Question:** {q}")
                     if "RAG System" in answers:
                         st.markdown(f"**RAG:** {answers['RAG System'][:80]}...")
+    
+    with col_info1:
+        # Performance charts - smaller, to the side
+        st.markdown("### 📈 Real-Time Analytics")
+        fig = create_performance_charts()
+        st.plotly_chart(fig, use_container_width=True)
     
     # Process question and display results
     if ask_button and question:
