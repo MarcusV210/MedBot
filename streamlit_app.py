@@ -76,29 +76,12 @@ def create_stunning_css():
         padding: 0;
     }
     
-    /* Stunning gradient background */
     .stApp {
         background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
         color: white;
         overflow-x: hidden;
     }
     
-    /* Animated background particles */
-    .stApp::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
-        pointer-events: none;
-        z-index: -1;
-    }
-    
-    /* Glassmorphism containers */
     .glass-container {
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(20px);
@@ -107,37 +90,16 @@ def create_stunning_css():
         box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
     }
     
-    /* Floating sidebar */
-    .floating-sidebar {
-        position: fixed;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 300px;
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(25px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 20px;
-        padding: 1.5rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        transition: all 0.3s ease;
-    }
-    
-    /* Neon glow effects */
     .neon-glow {
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
-                    0 0 40px rgba(59, 130, 246, 0.2),
-                    0 0 60px rgba(59, 130, 246, 0.1);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         animation: pulse-glow 2s ease-in-out infinite alternate;
     }
     
     @keyframes pulse-glow {
-        from { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.2); }
-        to { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.3); }
+        from { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        to { box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
     }
     
-    /* Enhanced buttons */
     .stButton > button {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -145,26 +107,8 @@ def create_stunning_css():
         border-radius: 15px;
         padding: 1rem 2rem;
         font-weight: 600;
-        font-size: 1rem;
         transition: all 0.3s ease;
         box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .stButton > button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s;
-    }
-    
-    .stButton > button:hover::before {
-        left: 100%;
     }
     
     .stButton > button:hover {
@@ -172,25 +116,15 @@ def create_stunning_css():
         box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
     }
     
-    /* Enhanced text inputs */
     .stTextArea > div > div > textarea {
         background: rgba(255, 255, 255, 0.08);
         border: 2px solid rgba(59, 130, 246, 0.3);
         border-radius: 15px;
         padding: 1.5rem;
-        font-size: 1rem;
         color: white;
         backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
     }
     
-    .stTextArea > div > div > textarea:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 25px rgba(102, 126, 234, 0.4);
-        transform: scale(1.01);
-    }
-    
-    /* Animated metrics */
     .metric-card {
         background: rgba(255, 255, 255, 0.06);
         backdrop-filter: blur(15px);
@@ -199,19 +133,6 @@ def create_stunning_css():
         padding: 1.5rem;
         text-align: center;
         transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .metric-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
-        animation: shine 3s infinite;
     }
     
     .metric-card:hover {
@@ -219,66 +140,12 @@ def create_stunning_css():
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
     }
     
-    @keyframes shine {
-        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-    }
-    
-    /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .stDeployButton {display: none;}
-    
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border-radius: 10px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #764ba2, #667eea);
-    }
     </style>
     """
-    
-    /* Animated header */
-    .hero-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        padding: 3rem 2rem;
-        border-radius: 20px;
-        text-align: center;
-        margin-bottom: 2rem;
-        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
-        animation: glow 2s ease-in-out infinite alternate;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .hero-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-        animation: shine 3s infinite;
-    }
-    
-    @keyframes glow {
-        from { box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3); }
-        to { box-shadow: 0 25px 50px rgba(102, 126, 234, 0.5); }
-    }
     
     @keyframes shine {
         0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
