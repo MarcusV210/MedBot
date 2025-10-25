@@ -610,52 +610,52 @@ def main():
         resp_col1, resp_col2 = st.columns(2)
         
         with resp_col1:
-                # RAG System Response
-                st.markdown(f"""
-                <div class="response-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #9b59b6;">🥇 RAG System</h3>
-                        <span class="accuracy-badge">{rag_accuracy:.1f}%</span>
-                    </div>
-                    <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Direct retrieval from Harrison's Principles of Internal Medicine</p>
+            # RAG System Response
+            st.markdown(f"""
+            <div class="response-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; color: #9b59b6;">🥇 RAG System</h3>
+                    <span class="accuracy-badge">{rag_accuracy:.1f}%</span>
                 </div>
-                """, unsafe_allow_html=True)
-                
-                # Display RAG answer in a LARGE container
-                st.markdown(f"""
-                <div style="background: rgba(155, 89, 182, 0.15); padding: 2.5rem; border-radius: 15px; 
-                           border-left: 6px solid #9b59b6; margin-bottom: 2rem; font-size: 1.1rem; 
-                           line-height: 1.6; box-shadow: 0 10px 30px rgba(155, 89, 182, 0.2);">
-                    {rag_answer}
-                </div>
-                """, unsafe_allow_html=True)
+                <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Direct retrieval from Harrison's Principles of Internal Medicine</p>
+            </div>
+            """, unsafe_allow_html=True)
             
-            with resp_col2:
-                # GitHub AI Response
-                st.markdown(f"""
-                <div class="response-card github-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #667eea;">🥈 GitHub AI</h3>
-                        <span class="accuracy-badge">{github_accuracy:.1f}%</span>
-                    </div>
-                    <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Context-aware comprehensive synthesis</p>
+            # Display RAG answer in a LARGE container
+            st.markdown(f"""
+            <div style="background: rgba(155, 89, 182, 0.15); padding: 2.5rem; border-radius: 15px; 
+                       border-left: 6px solid #9b59b6; margin-bottom: 2rem; font-size: 1.1rem; 
+                       line-height: 1.6; box-shadow: 0 10px 30px rgba(155, 89, 182, 0.2);">
+                {rag_answer}
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with resp_col2:
+            # GitHub AI Response
+            st.markdown(f"""
+            <div class="response-card github-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; color: #667eea;">🥈 GitHub AI</h3>
+                    <span class="accuracy-badge">{github_accuracy:.1f}%</span>
                 </div>
-                """, unsafe_allow_html=True)
-                
-                # Display GitHub AI answer in a LARGE container
-                st.markdown(f"""
-                <div style="background: rgba(102, 126, 234, 0.15); padding: 2.5rem; border-radius: 15px; 
-                           border-left: 6px solid #667eea; margin-bottom: 2rem; font-size: 1.1rem; 
-                           line-height: 1.6; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);">
-                    {github_answer}
-                </div>
-                """, unsafe_allow_html=True)
+                <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Context-aware comprehensive synthesis</p>
+            </div>
+            """, unsafe_allow_html=True)
             
-            # Add to chat history
-            st.session_state.chat_history.append((question, answers))
-            
-            # Success message with real stats - PROMINENT
-            st.markdown("""
+            # Display GitHub AI answer in a LARGE container
+            st.markdown(f"""
+            <div style="background: rgba(102, 126, 234, 0.15); padding: 2.5rem; border-radius: 15px; 
+                       border-left: 6px solid #667eea; margin-bottom: 2rem; font-size: 1.1rem; 
+                       line-height: 1.6; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);">
+                {github_answer}
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Add to chat history
+        st.session_state.chat_history.append((question, answers))
+        
+        # Success message with real stats - PROMINENT
+        st.markdown("""
             <div style="background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(67, 160, 71, 0.2) 100%); 
                         padding: 2rem; border-radius: 15px; margin: 2rem 0; text-align: center;
                         border: 2px solid rgba(76, 175, 80, 0.4); box-shadow: 0 10px 30px rgba(76, 175, 80, 0.2);">
