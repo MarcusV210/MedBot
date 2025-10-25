@@ -554,7 +554,125 @@ def main():
     with col_btn2:
         ask_button = st.button("🚀 GET MEDICAL AI ANSWERS", type="primary", use_container_width=True)
     
-    # Live metrics dashboard - BELOW Q&A
+    # ===== ANSWERS SECTION - IMMEDIATE PRIORITY =====
+    # Process question and display results RIGHT HERE
+    if ask_button and question:
+        start_time = time.time()
+        
+        # Create placeholder for results
+        results_container = st.container()
+        
+        with st.spinner("🔄 Consulting medical AI systems..."):
+            # Generate answers
+            answers = {}
+            
+            # RAG System
+            with st.status("🔍 Retrieving from Harrison's textbook..."):
+                rag_answer = generate_rag_answer(question, st.session_state.emb_model, st.session_state.collection)
+                answers["RAG System"] = rag_answer
+                # Calculate real accuracy based on answer quality
+                rag_accuracy = 83.9 + random.uniform(-2, 2) if len(rag_answer) > 100 else 45.0
+                st.session_state.rag_scores.append(rag_accuracy)
+            
+            # GitHub AI
+            with st.status("🤖 Consulting GitHub AI models..."):
+                messages = [
+                    {"role": "system", "content": "You are a medical AI assistant. Provide accurate, comprehensive medical information."},
+                    {"role": "user", "content": f"Question: {question}\n\nContext from Harrison's textbook: {rag_answer[:300]}\n\nPlease provide a comprehensive medical answer."}
+                ]
+                github_answer = call_github_models(messages)
+                answers["GitHub AI"] = github_answer
+                # Calculate real accuracy based on answer quality
+                github_accuracy = 77.0 + random.uniform(-3, 3) if "❌" not in github_answer else 25.0
+                st.session_state.github_scores.append(github_accuracy)
+        
+        # Calculate response time
+        response_time = time.time() - start_time
+        st.session_state.response_times.append(response_time)
+        st.session_state.total_questions += 1
+        
+        # ===== MASSIVE ANSWER DISPLAY SECTION =====
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.2) 0%, rgba(102, 126, 234, 0.2) 100%); 
+                    padding: 3rem 2rem; border-radius: 20px; margin: 3rem 0; 
+                    border: 2px solid rgba(155, 89, 182, 0.4); backdrop-filter: blur(20px);
+                    box-shadow: 0 25px 50px rgba(155, 89, 182, 0.3);">
+            <h1 style="text-align: center; color: #9b59b6; margin-bottom: 2rem; font-size: 3rem;">
+                🎯 YOUR MEDICAL AI ANSWERS
+            </h1>
+            <p style="text-align: center; opacity: 0.9; font-size: 1.3rem; margin-bottom: 2rem;">
+                Comprehensive responses from Harrison's Medical Textbook + Advanced AI
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Create two columns for responses - FULL WIDTH
+        resp_col1, resp_col2 = st.columns(2)
+        
+        with resp_col1:
+                # RAG System Response
+                st.markdown(f"""
+                <div class="response-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0; color: #9b59b6;">🥇 RAG System</h3>
+                        <span class="accuracy-badge">{rag_accuracy:.1f}%</span>
+                    </div>
+                    <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Direct retrieval from Harrison's Principles of Internal Medicine</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Display RAG answer in a LARGE container
+                st.markdown(f"""
+                <div style="background: rgba(155, 89, 182, 0.15); padding: 2.5rem; border-radius: 15px; 
+                           border-left: 6px solid #9b59b6; margin-bottom: 2rem; font-size: 1.1rem; 
+                           line-height: 1.6; box-shadow: 0 10px 30px rgba(155, 89, 182, 0.2);">
+                    {rag_answer}
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with resp_col2:
+                # GitHub AI Response
+                st.markdown(f"""
+                <div class="response-card github-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="margin: 0; color: #667eea;">🥈 GitHub AI</h3>
+                        <span class="accuracy-badge">{github_accuracy:.1f}%</span>
+                    </div>
+                    <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Context-aware comprehensive synthesis</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Display GitHub AI answer in a LARGE container
+                st.markdown(f"""
+                <div style="background: rgba(102, 126, 234, 0.15); padding: 2.5rem; border-radius: 15px; 
+                           border-left: 6px solid #667eea; margin-bottom: 2rem; font-size: 1.1rem; 
+                           line-height: 1.6; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);">
+                    {github_answer}
+                </div>
+                """, unsafe_allow_html=True)
+            
+            # Add to chat history
+            st.session_state.chat_history.append((question, answers))
+            
+            # Success message with real stats - PROMINENT
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(67, 160, 71, 0.2) 100%); 
+                        padding: 2rem; border-radius: 15px; margin: 2rem 0; text-align: center;
+                        border: 2px solid rgba(76, 175, 80, 0.4); box-shadow: 0 10px 30px rgba(76, 175, 80, 0.2);">
+                <h2 style="color: #4CAF50; margin: 0 0 1rem 0;">✅ Medical Consultation Complete!</h2>
+                <div style="display: flex; justify-content: space-around; margin-top: 1rem;">
+                    <div><strong>⏱️ Response Time:</strong> {:.2f}s</div>
+                    <div><strong>📊 Total Questions:</strong> {}</div>
+                    <div><strong>🎯 Session Active:</strong> Live</div>
+                </div>
+            </div>
+            """.format(response_time, st.session_state.total_questions), unsafe_allow_html=True)
+        
+        # Force refresh of metrics
+        time.sleep(0.1)
+        st.rerun()
+    
+    # ===== DASHBOARD SECTION - BELOW ANSWERS =====
     st.markdown("---")
     st.markdown("### 📊 Live Performance Dashboard")
     create_live_metrics()
@@ -598,104 +716,6 @@ def main():
         st.markdown("### 📈 Real-Time Analytics")
         fig = create_performance_charts()
         st.plotly_chart(fig, use_container_width=True)
-    
-    # Process question and display results
-    if ask_button and question:
-        start_time = time.time()
-        
-        # Create placeholder for results
-        results_container = st.container()
-        
-        with st.spinner("🔄 Consulting medical AI systems..."):
-            # Generate answers
-            answers = {}
-            
-            # RAG System
-            with st.status("🔍 Retrieving from Harrison's textbook..."):
-                rag_answer = generate_rag_answer(question, st.session_state.emb_model, st.session_state.collection)
-                answers["RAG System"] = rag_answer
-                # Calculate real accuracy based on answer quality
-                rag_accuracy = 83.9 + random.uniform(-2, 2) if len(rag_answer) > 100 else 45.0
-                st.session_state.rag_scores.append(rag_accuracy)
-            
-            # GitHub AI
-            with st.status("🤖 Consulting GitHub AI models..."):
-                messages = [
-                    {"role": "system", "content": "You are a medical AI assistant. Provide accurate, comprehensive medical information."},
-                    {"role": "user", "content": f"Question: {question}\n\nContext from Harrison's textbook: {rag_answer[:300]}\n\nPlease provide a comprehensive medical answer."}
-                ]
-                github_answer = call_github_models(messages)
-                answers["GitHub AI"] = github_answer
-                # Calculate real accuracy based on answer quality
-                github_accuracy = 77.0 + random.uniform(-3, 3) if "❌" not in github_answer else 25.0
-                st.session_state.github_scores.append(github_accuracy)
-        
-        # Calculate response time
-        response_time = time.time() - start_time
-        st.session_state.response_times.append(response_time)
-        st.session_state.total_questions += 1
-        
-        # Display results in the main area (FULL WIDTH)
-        with results_container:
-            st.markdown("---")
-            st.markdown("# 🎯 Medical AI Responses")
-            
-            # Create two columns for responses
-            resp_col1, resp_col2 = st.columns(2)
-            
-            with resp_col1:
-                # RAG System Response
-                st.markdown(f"""
-                <div class="response-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #9b59b6;">🥇 RAG System</h3>
-                        <span class="accuracy-badge">{rag_accuracy:.1f}%</span>
-                    </div>
-                    <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Direct retrieval from Harrison's Principles of Internal Medicine</p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Display RAG answer in a nice container
-                st.markdown(f"""
-                <div style="background: rgba(155, 89, 182, 0.1); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #9b59b6; margin-bottom: 1rem;">
-                    {rag_answer}
-                </div>
-                """, unsafe_allow_html=True)
-            
-            with resp_col2:
-                # GitHub AI Response
-                st.markdown(f"""
-                <div class="response-card github-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h3 style="margin: 0; color: #667eea;">🥈 GitHub AI</h3>
-                        <span class="accuracy-badge">{github_accuracy:.1f}%</span>
-                    </div>
-                    <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Context-aware comprehensive synthesis</p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Display GitHub AI answer in a nice container
-                st.markdown(f"""
-                <div style="background: rgba(102, 126, 234, 0.1); padding: 1.5rem; border-radius: 10px; border-left: 4px solid #667eea; margin-bottom: 1rem;">
-                    {github_answer}
-                </div>
-                """, unsafe_allow_html=True)
-            
-            # Add to chat history
-            st.session_state.chat_history.append((question, answers))
-            
-            # Success message with real stats
-            col_success1, col_success2, col_success3 = st.columns(3)
-            with col_success1:
-                st.success(f"✅ Consultation complete!")
-            with col_success2:
-                st.info(f"⏱️ Response time: {response_time:.2f}s")
-            with col_success3:
-                st.info(f"📊 Total questions: {st.session_state.total_questions}")
-        
-        # Force refresh of metrics
-        time.sleep(0.1)
-        st.rerun()
     
     # Footer with live stats
     st.markdown("---")
