@@ -17,6 +17,6 @@ echo.
 echo Opening Streamlit Cloud...
 start https://share.streamlit.io/
 echo.
-echo Follow the steps in DEPLOY_NOW.md
+echo Follow the steps in STREAMLIT_DEPLOYMENT.md
 echo.
 pause
