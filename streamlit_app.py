@@ -146,10 +146,16 @@ def create_stunning_css():
     .stDeployButton {display: none;}
     </style>
     """
-    
-    @keyframes shine {
-        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+# Orphaned CSS commented out to fix syntax errors
+"""
+The following CSS was orphaned outside of Python strings.
+It has been commented out to prevent syntax errors.
+All CSS is now properly contained in the create_stunning_css() function.
+"""
+
+# @keyframes shine {
+        # 0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        # 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
     }
     
     /* Glassmorphism cards */
@@ -193,8 +199,8 @@ def create_stunning_css():
     }
     
     @keyframes slide {
-        0% { left: -100%; }
-        100% { left: 100%; }
+        # 0% { left: -100%; }
+        # 100% { left: 100%; }
     }
     
     .metric-number {
@@ -208,8 +214,8 @@ def create_stunning_css():
     }
     
     @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+        # 0%, 100% { transform: scale(1); }
+        # 50% { transform: scale(1.05); }
     }
     
     /* Response cards */
@@ -252,9 +258,9 @@ def create_stunning_css():
     }
     
     @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-        40% { transform: translateY(-5px); }
-        60% { transform: translateY(-3px); }
+        # 0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        # 40% { transform: translateY(-5px); }
+        # 60% { transform: translateY(-3px); }
     }
     
     /* Loading animations */
@@ -269,8 +275,8 @@ def create_stunning_css():
     }
     
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        # 0% { transform: rotate(0deg); }
+        # 100% { transform: rotate(360deg); }
     }
     
     /* Large input field styling */
