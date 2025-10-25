@@ -349,25 +349,45 @@ def load_harrison_pdf():
     """Load Harrison's textbook PDF if available"""
     pdf_paths = [
         "harrison_textbook.pdf",
-        "harrisons_principles_internal_medicine.pdf",
+        "harrisons_principles_internal_medicine.pdf", 
         "medical_textbook.pdf",
         "docs/harrison_textbook.pdf",
-        "data/harrison_textbook.pdf"
+        "data/harrison_textbook.pdf",
+        "uploaded_harrison.pdf"  # For uploaded files
     ]
     
     for pdf_path in pdf_paths:
         if os.path.exists(pdf_path):
-            st.info(f"📚 Found Harrison's textbook: {pdf_path}")
+            st.success(f"📚 Found Harrison's textbook: {pdf_path}")
             with st.spinner("📖 Extracting text from Harrison's textbook PDF..."):
                 text = extract_text_from_pdf(pdf_path)
                 if text:
-                    st.success(f"✅ Successfully extracted {len(text)} characters from PDF")
+                    st.success(f"✅ Successfully extracted {len(text):,} characters from PDF")
                     with st.spinner("🔪 Chunking textbook into sections..."):
                         chunks = chunk_text_for_rag(text)
                         st.success(f"✅ Created {len(chunks)} text chunks for RAG")
                         return chunks
     
     return None
+
+def process_uploaded_pdf(uploaded_file):
+    """Process uploaded PDF and save for RAG"""
+    if uploaded_file is not None:
+        # Save uploaded file permanently
+        with open("uploaded_harrison.pdf", "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        
+        # Extract and process
+        text = extract_text_from_pdf("uploaded_harrison.pdf")
+        if text:
+            chunks = chunk_text_for_rag(text)
+            return chunks, len(text)
+        else:
+            # Clean up failed file
+            if os.path.exists("uploaded_harrison.pdf"):
+                os.remove("uploaded_harrison.pdf")
+            return None, 0
+    return None, 0
 
 @st.cache_resource
 def load_models():
@@ -382,17 +402,16 @@ def load_models():
             collection = chroma.create_collection("medbot_harrison_full")
             
             # Try to load actual Harrison's PDF first
-            st.info("🔍 Searching for Harrison's Principles of Internal Medicine PDF...")
             pdf_chunks = load_harrison_pdf()
             
             if pdf_chunks:
                 # Use actual PDF content
-                st.info(f"📚 Using FULL Harrison's textbook with {len(pdf_chunks)} sections")
+                st.success(f"🎉 FULL RAG MODE: Using Harrison's textbook with {len(pdf_chunks)} sections!")
                 medical_knowledge = pdf_chunks
             else:
                 # Fallback to comprehensive sample data
-                st.warning("📖 Harrison's PDF not found. Using comprehensive sample medical database.")
-                st.info("💡 To use full RAG: Place 'harrison_textbook.pdf' in the project folder")
+                st.info("📖 Sample Mode: Using comprehensive medical database (15+ topics)")
+                st.info("💡 Upload Harrison's PDF above for complete textbook RAG")
                 
                 # Comprehensive medical knowledge base (simulating Harrison's textbook chapters)
                 medical_knowledge = [
@@ -689,6 +708,15 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
+    # Show RAG database status
+    if os.path.exists("uploaded_harrison.pdf"):
+        st.success("📚 Using FULL Harrison's Textbook RAG Database")
+    elif any(os.path.exists(path) for path in ["harrison_textbook.pdf", "harrisons_principles_internal_medicine.pdf"]):
+        st.success("📚 Using Harrison's Textbook RAG Database")
+    else:
+        st.info("📖 Using Sample Medical Database (15+ topics)")
+        st.info("💡 Upload Harrison's PDF above for complete textbook RAG")
+    
     # Check PDF processing capabilities
     if not PDF_AVAILABLE:
         st.warning("📋 For full PDF RAG functionality, install: `pip install PyPDF2 PyMuPDF`")
@@ -729,30 +757,31 @@ def main():
         Upload Harrison's Principles of Internal Medicine PDF to enable complete textbook retrieval.
         """)
         
-        uploaded_file = st.file_uploader(
-            "Choose Harrison's textbook PDF",
-            type=['pdf'],
-            help="Upload the complete Harrison's textbook for full RAG functionality"
-        )
-        
-        if uploaded_file is not None:
-            if st.button("🔄 Process PDF for RAG"):
-                with st.spinner("📖 Processing Harrison's textbook..."):
-                    # Save uploaded file temporarily
-                    with open("temp_harrison.pdf", "wb") as f:
-                        f.write(uploaded_file.getbuffer())
-                    
-                    # Extract and process
-                    text = extract_text_from_pdf("temp_harrison.pdf")
-                    if text:
-                        chunks = chunk_text_for_rag(text)
-                        st.success(f"✅ Processed {len(chunks)} sections from Harrison's textbook!")
-                        st.info("🔄 Please restart the app to use the new textbook data.")
-                    else:
-                        st.error("❌ Failed to extract text from PDF")
-                    
-                    # Clean up
-                    os.remove("temp_harrison.pdf")
+        # Check if PDF already uploaded
+        if os.path.exists("uploaded_harrison.pdf"):
+            st.success("✅ Harrison's textbook PDF already uploaded and ready!")
+            if st.button("🗑️ Remove Current PDF"):
+                os.remove("uploaded_harrison.pdf")
+                st.success("PDF removed. Please restart the app.")
+                st.rerun()
+        else:
+            uploaded_file = st.file_uploader(
+                "Choose Harrison's textbook PDF",
+                type=['pdf'],
+                help="Upload the complete Harrison's textbook for full RAG functionality"
+            )
+            
+            if uploaded_file is not None:
+                if st.button("🔄 Process PDF for RAG"):
+                    with st.spinner("📖 Processing Harrison's textbook..."):
+                        chunks, text_length = process_uploaded_pdf(uploaded_file)
+                        if chunks:
+                            st.success(f"✅ Processed {len(chunks)} sections from Harrison's textbook!")
+                            st.success(f"📊 Extracted {text_length:,} characters of medical content")
+                            st.info("🔄 Please restart the app to use the new textbook data.")
+                            st.balloons()
+                        else:
+                            st.error("❌ Failed to extract text from PDF")
     
     # Professional question input
     st.markdown("### 🔍 Enter Your Medical Question")
