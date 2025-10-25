@@ -558,94 +558,6 @@ def main():
     with col_btn2:
         ask_button = st.button("🚀 GET MEDICAL AI ANSWERS", type="primary", use_container_width=True)
     
-    # ===== DISPLAY LATEST ANSWER IF EXISTS =====
-    if st.session_state.chat_history:
-        latest_question, latest_answers = st.session_state.chat_history[-1]
-        
-        # DEBUG: Show what we have
-        st.write("🔍 DEBUG - Latest Question:", latest_question)
-        st.write("🔍 DEBUG - Answer Keys:", list(latest_answers.keys()) if latest_answers else "No answers")
-        
-        # Display the latest Q&A prominently
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.2) 0%, rgba(102, 126, 234, 0.2) 100%); 
-                    padding: 3rem 2rem; border-radius: 20px; margin: 3rem 0; 
-                    border: 2px solid rgba(155, 89, 182, 0.4); backdrop-filter: blur(20px);
-                    box-shadow: 0 25px 50px rgba(155, 89, 182, 0.3);">
-            <h1 style="text-align: center; color: #9b59b6; margin-bottom: 2rem; font-size: 3rem;">
-                🎯 YOUR MEDICAL AI ANSWERS
-            </h1>
-            <p style="text-align: center; opacity: 0.9; font-size: 1.3rem; margin-bottom: 2rem;">
-                Latest consultation results
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Display question
-        st.markdown(f"""
-        <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; margin: 2rem 0; 
-                   border-left: 6px solid #667eea; font-size: 1.2rem;">
-            <strong>🔍 Question:</strong> {latest_question}
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Display answers in two columns
-        resp_col1, resp_col2 = st.columns(2)
-        
-        with resp_col1:
-            # RAG System Response - USE REAL ACCURACY
-            rag_accuracy = st.session_state.rag_scores[-1] if st.session_state.rag_scores else 83.9
-            st.markdown(f"""
-            <div class="response-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3 style="margin: 0; color: #9b59b6;">🥇 RAG System</h3>
-                    <span class="accuracy-badge">{rag_accuracy:.1f}%</span>
-                </div>
-                <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Direct retrieval from Harrison's Principles of Internal Medicine</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Display RAG answer - ALWAYS SHOW SOMETHING
-            if "RAG System" in latest_answers:
-                rag_text = latest_answers["RAG System"]
-                st.markdown(f"""
-                <div style="background: rgba(155, 89, 182, 0.15); padding: 2.5rem; border-radius: 15px; 
-                           border-left: 6px solid #9b59b6; margin-bottom: 2rem; font-size: 1.1rem; 
-                           line-height: 1.6; box-shadow: 0 10px 30px rgba(155, 89, 182, 0.2);">
-                    {rag_text}
-                </div>
-                """, unsafe_allow_html=True)
-            else:
-                st.error("❌ RAG System answer not found in latest_answers")
-                st.write("Available keys:", list(latest_answers.keys()))
-        
-        with resp_col2:
-            # GitHub AI Response - USE REAL ACCURACY
-            github_accuracy = st.session_state.github_scores[-1] if st.session_state.github_scores else 77.0
-            st.markdown(f"""
-            <div class="response-card github-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3 style="margin: 0; color: #667eea;">🥈 GitHub AI</h3>
-                    <span class="accuracy-badge">{github_accuracy:.1f}%</span>
-                </div>
-                <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Context-aware comprehensive synthesis</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Display GitHub AI answer - ALWAYS SHOW SOMETHING
-            if "GitHub AI" in latest_answers:
-                github_text = latest_answers["GitHub AI"]
-                st.markdown(f"""
-                <div style="background: rgba(102, 126, 234, 0.15); padding: 2.5rem; border-radius: 15px; 
-                           border-left: 6px solid #667eea; margin-bottom: 2rem; font-size: 1.1rem; 
-                           line-height: 1.6; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);">
-                    {github_text}
-                </div>
-                """, unsafe_allow_html=True)
-            else:
-                st.error("❌ GitHub AI answer not found in latest_answers")
-                st.write("Available keys:", list(latest_answers.keys()))
-    
     # ===== NEW QUESTION PROCESSING =====
     # Process question and display results RIGHT HERE
     if ask_button and question:
@@ -685,12 +597,80 @@ def main():
         
         # Just add to chat history - answers will be displayed above persistently
         
-        # Add to chat history - this will trigger the persistent display above
+        # Add to chat history
         st.session_state.chat_history.append((question, answers))
+        
+        # ===== DISPLAY ANSWERS IMMEDIATELY =====
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.2) 0%, rgba(102, 126, 234, 0.2) 100%); 
+                    padding: 3rem 2rem; border-radius: 20px; margin: 3rem 0; 
+                    border: 2px solid rgba(155, 89, 182, 0.4); backdrop-filter: blur(20px);
+                    box-shadow: 0 25px 50px rgba(155, 89, 182, 0.3);">
+            <h1 style="text-align: center; color: #9b59b6; margin-bottom: 2rem; font-size: 3rem;">
+                🎯 YOUR MEDICAL AI ANSWERS
+            </h1>
+            <p style="text-align: center; opacity: 0.9; font-size: 1.3rem; margin-bottom: 2rem;">
+                Fresh consultation results
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Display question
+        st.markdown(f"""
+        <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; margin: 2rem 0; 
+                   border-left: 6px solid #667eea; font-size: 1.2rem;">
+            <strong>🔍 Question:</strong> {question}
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Display answers in two columns
+        resp_col1, resp_col2 = st.columns(2)
+        
+        with resp_col1:
+            # RAG System Response
+            st.markdown(f"""
+            <div class="response-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; color: #9b59b6;">🥇 RAG System</h3>
+                    <span class="accuracy-badge">{rag_accuracy:.1f}%</span>
+                </div>
+                <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Direct retrieval from Harrison's Principles of Internal Medicine</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Display RAG answer
+            st.markdown(f"""
+            <div style="background: rgba(155, 89, 182, 0.15); padding: 2.5rem; border-radius: 15px; 
+                       border-left: 6px solid #9b59b6; margin-bottom: 2rem; font-size: 1.1rem; 
+                       line-height: 1.6; box-shadow: 0 10px 30px rgba(155, 89, 182, 0.2);">
+                {rag_answer}
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with resp_col2:
+            # GitHub AI Response
+            st.markdown(f"""
+            <div class="response-card github-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; color: #667eea;">🥈 GitHub AI</h3>
+                    <span class="accuracy-badge">{github_accuracy:.1f}%</span>
+                </div>
+                <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Context-aware comprehensive synthesis</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Display GitHub AI answer
+            st.markdown(f"""
+            <div style="background: rgba(102, 126, 234, 0.15); padding: 2.5rem; border-radius: 15px; 
+                       border-left: 6px solid #667eea; margin-bottom: 2rem; font-size: 1.1rem; 
+                       line-height: 1.6; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);">
+                {github_answer}
+            </div>
+            """, unsafe_allow_html=True)
         
         # Show success message
         st.success(f"✅ Medical consultation complete! Response time: {response_time:.2f}s")
-        st.info("📋 Your answers are displayed above and will remain visible.")
+        st.info("📋 Your answers are displayed above.")
     
     # ===== DASHBOARD SECTION - BELOW ANSWERS =====
     st.markdown("---")
