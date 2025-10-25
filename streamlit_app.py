@@ -154,12 +154,15 @@ All CSS is now properly contained in the create_stunning_css() function.
 """
 
 # @keyframes shine {
-        # 0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-        # 100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-    }
-    
-    /* Glassmorphism cards */
-    .glass-card {
+#         0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+#         100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+# }
+"""
+Orphaned CSS block - commented out to prevent syntax errors
+All CSS styling is now properly contained in the create_stunning_css() function above.
+
+/* Glassmorphism cards */
+.glass-card {
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.2);
@@ -334,7 +337,7 @@ All CSS is now properly contained in the create_stunning_css() function.
     footer {visibility: hidden;}
     header {visibility: hidden;}
     </style>
-    """
+"""
 
 def extract_text_from_pdf(pdf_path):
     """Extract text from PDF file - like ChatPDF"""
