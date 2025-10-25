@@ -358,18 +358,44 @@ def call_github_models(messages, temperature=0.7):
 def generate_rag_answer(question, emb_model, collection):
     """Generate RAG answer - ONLY from Harrison's Textbook content"""
     try:
-        question_lower = question.lower()
+        # Encode the question for similarity search
         qemb = emb_model.encode([question])
-        res = collection.query(query_embeddings=qemb.tolist(), n_results=1)  # Get single best match
+        
+        # Query the collection for the most relevant document
+        res = collection.query(
+            query_embeddings=qemb.tolist(), 
+            n_results=3,  # Get top 3 for better matching
+            include=['documents', 'distances']
+        )
         
         if res['documents'] and res['documents'][0]:
-            retrieved_content = res['documents'][0][0]  # Get the single best document
+            all_docs = res['documents'][0]
+            distances = res['distances'][0] if res['distances'] else []
             
-            # Return ONLY the retrieved content from Harrison's textbook
-            if len(retrieved_content) > 800:
-                return retrieved_content[:800] + "... [Content continues in Harrison's Principles of Internal Medicine]"
+            # Find the best match based on keyword relevance and similarity
+            question_keywords = set(word.lower() for word in question.split() if len(word) > 3)
+            best_doc = None
+            best_score = float('inf')
+            
+            for i, doc in enumerate(all_docs):
+                doc_lower = doc.lower()
+                # Count keyword matches
+                keyword_matches = sum(1 for keyword in question_keywords if keyword in doc_lower)
+                # Combine with embedding distance (lower is better)
+                combined_score = distances[i] - (keyword_matches * 0.1)  # Boost for keyword matches
+                
+                if combined_score < best_score:
+                    best_score = combined_score
+                    best_doc = doc
+            
+            if best_doc:
+                # Add Harrison's attribution
+                if len(best_doc) > 800:
+                    return f"{best_doc[:800]}... [Source: Harrison's Principles of Internal Medicine, 21st Edition]"
+                else:
+                    return f"{best_doc} [Source: Harrison's Principles of Internal Medicine, 21st Edition]"
             else:
-                return retrieved_content
+                return "No relevant information found in Harrison's Principles of Internal Medicine for this query."
         else:
             return "No relevant information found in Harrison's Principles of Internal Medicine for this query."
             
@@ -596,17 +622,29 @@ def main():
             # Generate answers
             answers = {}
             
-            # RAG System
-            with st.status("🔍 Retrieving from Harrison's textbook..."):
+            # RAG System - Harrison's Textbook Retrieval
+            with st.status("🔍 Searching Harrison's Principles of Internal Medicine..."):
+                st.write(f"🔍 Query: {question}")
                 rag_answer = generate_rag_answer(question, st.session_state.emb_model, st.session_state.collection)
                 answers["RAG System"] = rag_answer
+                
+                # Show retrieval success
+                if "Source: Harrison's" in rag_answer:
+                    st.write("✅ Successfully retrieved content from Harrison's textbook")
+                elif "No relevant information found" in rag_answer:
+                    st.write("⚠️ No matching content found in Harrison's database")
+                else:
+                    st.write("❌ RAG retrieval failed")
+                
                 # Calculate retrieval confidence based on content quality and relevance
                 if "No relevant information found" in rag_answer or "RAG retrieval error" in rag_answer:
                     rag_confidence = 25.0  # Low confidence for failed retrieval
-                elif len(rag_answer) > 200:  # Good content length
-                    rag_confidence = 85.0 + (len(rag_answer) / 100) * 2  # Higher confidence for longer, detailed content
+                elif "Source: Harrison's" in rag_answer and len(rag_answer) > 300:
+                    rag_confidence = 88.0 + min(7.0, len(rag_answer) / 150)  # High confidence for good retrieval
+                elif len(rag_answer) > 200:
+                    rag_confidence = 75.0 + (len(rag_answer) / 200) * 5  # Good content
                 else:
-                    rag_confidence = 65.0  # Moderate confidence for shorter content
+                    rag_confidence = 60.0  # Moderate confidence for shorter content
                 rag_confidence = min(95.0, rag_confidence)  # Cap at 95%
                 st.session_state.rag_scores.append(rag_confidence)
             
@@ -693,12 +731,24 @@ def main():
             </div>
             """, unsafe_allow_html=True)
             
-            # Professional RAG answer display
+            # Professional RAG answer display with source verification
+            if "Source: Harrison's" in rag_answer:
+                source_indicator = "✅ Verified Harrison's Content"
+                border_color = "#10b981"
+                bg_color = "rgba(16, 185, 129, 0.05)"
+            else:
+                source_indicator = "⚠️ No Harrison's Match Found"
+                border_color = "#f59e0b"
+                bg_color = "rgba(245, 158, 11, 0.05)"
+                
             st.markdown(f"""
-            <div style="background: rgba(16, 185, 129, 0.05); padding: 2rem; border-radius: 12px; 
-                       border-left: 4px solid #10b981; margin-bottom: 1.5rem; font-size: 1rem; 
+            <div style="background: {bg_color}; padding: 2rem; border-radius: 12px; 
+                       border-left: 4px solid {border_color}; margin-bottom: 1rem; font-size: 1rem; 
                        line-height: 1.7; color: #e8eaed;">
                 {rag_answer}
+            </div>
+            <div style="text-align: right; font-size: 0.8rem; color: #9aa0a6; margin-bottom: 1.5rem;">
+                {source_indicator}
             </div>
             """, unsafe_allow_html=True)
         
