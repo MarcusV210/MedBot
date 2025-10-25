@@ -455,22 +455,26 @@ def create_performance_charts():
     return fig_performance
 
 def create_live_metrics():
-    """Create live updating metrics"""
+    """Create live updating metrics with REAL DATA"""
     col1, col2, col3, col4 = st.columns(4)
     
+    # Calculate real averages
+    avg_rag = sum(st.session_state.rag_scores) / len(st.session_state.rag_scores) if st.session_state.rag_scores else 83.9
+    avg_github = sum(st.session_state.github_scores) / len(st.session_state.github_scores) if st.session_state.github_scores else 77.0
+    
     with col1:
-        st.markdown("""
+        st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-number">83.9%</div>
+            <div class="metric-number">{avg_rag:.1f}%</div>
             <div style="color: #9b59b6; font-weight: 600;">RAG Accuracy</div>
             <div style="font-size: 0.8rem; opacity: 0.8;">Harrison's Textbook</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown("""
+        st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-number">77.0%</div>
+            <div class="metric-number">{avg_github:.1f}%</div>
             <div style="color: #667eea; font-weight: 600;">GitHub AI</div>
             <div style="font-size: 0.8rem; opacity: 0.8;">Context-Aware</div>
         </div>
@@ -585,12 +589,13 @@ def main():
         resp_col1, resp_col2 = st.columns(2)
         
         with resp_col1:
-            # RAG System Response
-            st.markdown("""
+            # RAG System Response - USE REAL ACCURACY
+            rag_accuracy = st.session_state.rag_scores[-1] if st.session_state.rag_scores else 83.9
+            st.markdown(f"""
             <div class="response-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <h3 style="margin: 0; color: #9b59b6;">🥇 RAG System</h3>
-                    <span class="accuracy-badge">83.9%</span>
+                    <span class="accuracy-badge">{rag_accuracy:.1f}%</span>
                 </div>
                 <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Direct retrieval from Harrison's Principles of Internal Medicine</p>
             </div>
@@ -607,12 +612,13 @@ def main():
                 """, unsafe_allow_html=True)
         
         with resp_col2:
-            # GitHub AI Response
-            st.markdown("""
+            # GitHub AI Response - USE REAL ACCURACY
+            github_accuracy = st.session_state.github_scores[-1] if st.session_state.github_scores else 77.0
+            st.markdown(f"""
             <div class="response-card github-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <h3 style="margin: 0; color: #667eea;">🥈 GitHub AI</h3>
-                    <span class="accuracy-badge">77.0%</span>
+                    <span class="accuracy-badge">{github_accuracy:.1f}%</span>
                 </div>
                 <p style="margin: 0 0 1rem 0; opacity: 0.8; font-style: italic;">Context-aware comprehensive synthesis</p>
             </div>
