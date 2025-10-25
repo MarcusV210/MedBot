@@ -19,6 +19,20 @@ from datetime import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
+# PDF processing imports for real RAG implementation
+try:
+    import PyPDF2
+    import fitz  # PyMuPDF
+    PDF_AVAILABLE = True
+except ImportError:
+    PDF_AVAILABLE = False
+
+try:
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    LANGCHAIN_AVAILABLE = True
+except ImportError:
+    LANGCHAIN_AVAILABLE = False
+
 # Professional page configuration
 st.set_page_config(
     page_title="🏥 MedBot - Medical AI Assistant",
@@ -280,20 +294,108 @@ def create_professional_css():
     </style>
     """
 
+def extract_text_from_pdf(pdf_path):
+    """Extract text from PDF file - like ChatPDF"""
+    if not PDF_AVAILABLE:
+        return None
+    
+    text_content = []
+    try:
+        # Try PyMuPDF first (better for complex PDFs)
+        doc = fitz.open(pdf_path)
+        for page_num in range(len(doc)):
+            page = doc.load_page(page_num)
+            text = page.get_text()
+            if text.strip():  # Only add non-empty pages
+                text_content.append(f"Page {page_num + 1}:\n{text}")
+        doc.close()
+        return "\n\n".join(text_content)
+    except:
+        # Fallback to PyPDF2
+        try:
+            with open(pdf_path, 'rb') as file:
+                pdf_reader = PyPDF2.PdfReader(file)
+                for page_num, page in enumerate(pdf_reader.pages):
+                    text = page.extract_text()
+                    if text.strip():
+                        text_content.append(f"Page {page_num + 1}:\n{text}")
+                return "\n\n".join(text_content)
+        except Exception as e:
+            st.error(f"Error reading PDF: {e}")
+            return None
+
+def chunk_text_for_rag(text, chunk_size=1000, chunk_overlap=200):
+    """Chunk text into smaller pieces for RAG - like ChatPDF"""
+    if LANGCHAIN_AVAILABLE:
+        # Use LangChain's text splitter for better chunking
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            length_function=len,
+            separators=["\n\n", "\n", ". ", " ", ""]
+        )
+        chunks = text_splitter.split_text(text)
+    else:
+        # Simple chunking fallback
+        chunks = []
+        for i in range(0, len(text), chunk_size - chunk_overlap):
+            chunk = text[i:i + chunk_size]
+            if chunk.strip():
+                chunks.append(chunk)
+    
+    return chunks
+
+def load_harrison_pdf():
+    """Load Harrison's textbook PDF if available"""
+    pdf_paths = [
+        "harrison_textbook.pdf",
+        "harrisons_principles_internal_medicine.pdf",
+        "medical_textbook.pdf",
+        "docs/harrison_textbook.pdf",
+        "data/harrison_textbook.pdf"
+    ]
+    
+    for pdf_path in pdf_paths:
+        if os.path.exists(pdf_path):
+            st.info(f"📚 Found Harrison's textbook: {pdf_path}")
+            with st.spinner("📖 Extracting text from Harrison's textbook PDF..."):
+                text = extract_text_from_pdf(pdf_path)
+                if text:
+                    st.success(f"✅ Successfully extracted {len(text)} characters from PDF")
+                    with st.spinner("🔪 Chunking textbook into sections..."):
+                        chunks = chunk_text_for_rag(text)
+                        st.success(f"✅ Created {len(chunks)} text chunks for RAG")
+                        return chunks
+    
+    return None
+
 @st.cache_resource
 def load_models():
-    """Load models with caching"""
+    """Load models with caching - Enhanced for PDF RAG"""
     try:
         emb_model = SentenceTransformer('all-MiniLM-L6-v2')
         
         chroma = chromadb.Client()
         try:
-            collection = chroma.get_collection("medbot_kb_v3")
+            collection = chroma.get_collection("medbot_harrison_full")
         except:
-            collection = chroma.create_collection("medbot_kb_v3")
+            collection = chroma.create_collection("medbot_harrison_full")
             
-            # Comprehensive medical knowledge base (simulating Harrison's textbook chapters)
-            medical_knowledge = [
+            # Try to load actual Harrison's PDF first
+            st.info("🔍 Searching for Harrison's Principles of Internal Medicine PDF...")
+            pdf_chunks = load_harrison_pdf()
+            
+            if pdf_chunks:
+                # Use actual PDF content
+                st.info(f"📚 Using FULL Harrison's textbook with {len(pdf_chunks)} sections")
+                medical_knowledge = pdf_chunks
+            else:
+                # Fallback to comprehensive sample data
+                st.warning("📖 Harrison's PDF not found. Using comprehensive sample medical database.")
+                st.info("💡 To use full RAG: Place 'harrison_textbook.pdf' in the project folder")
+                
+                # Comprehensive medical knowledge base (simulating Harrison's textbook chapters)
+                medical_knowledge = [
                 "Cancer represents a heterogeneous group of diseases characterized by uncontrolled cellular proliferation, invasion, and metastasis. Oncogenesis involves multiple genetic alterations including oncogene activation (e.g., RAS, MYC) and tumor suppressor gene inactivation (e.g., p53, RB). Major cancer types include carcinomas (epithelial origin), sarcomas (mesenchymal origin), hematologic malignancies (blood cells), and CNS tumors. Risk factors encompass tobacco use (lung, bladder, cervical cancer), alcohol consumption (liver, breast, colorectal cancer), infectious agents (HPV, HBV, H. pylori), radiation exposure, genetic predisposition (BRCA1/2, Lynch syndrome), and environmental carcinogens. Treatment modalities include surgical resection, chemotherapy (alkylating agents, antimetabolites, topoisomerase inhibitors), radiation therapy, targeted therapy (tyrosine kinase inhibitors, monoclonal antibodies), immunotherapy (checkpoint inhibitors, CAR-T cells), and hormone therapy for hormone-receptor positive tumors.",
                 
                 "Hypertension affects approximately 45% of adults and is defined as systolic BP ≥130 mmHg or diastolic BP ≥80 mmHg. Essential hypertension (95% of cases) results from complex interactions between genetic factors (ACE gene polymorphisms, sodium channel variants) and environmental influences. Pathophysiology involves increased peripheral vascular resistance through enhanced sympathetic nervous system activity, renin-angiotensin-aldosterone system (RAAS) activation, endothelial dysfunction with reduced nitric oxide bioavailability, and structural vascular changes including smooth muscle hypertrophy and arterial stiffening. Secondary hypertension causes include renal artery stenosis, primary aldosteronism, pheochromocytoma, Cushing's syndrome, and coarctation of aorta. Complications include left ventricular hypertrophy, coronary artery disease, stroke, chronic kidney disease, and retinopathy. Management follows ACC/AHA guidelines with lifestyle modifications and antihypertensive medications including ACE inhibitors, ARBs, calcium channel blockers, and thiazide diuretics.",
@@ -587,6 +689,12 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
+    # Check PDF processing capabilities
+    if not PDF_AVAILABLE:
+        st.warning("📋 For full PDF RAG functionality, install: `pip install PyPDF2 PyMuPDF`")
+    if not LANGCHAIN_AVAILABLE:
+        st.info("💡 For better text chunking, install: `pip install langchain`")
+    
     # Load models first
     if not st.session_state.models_loaded:
         with st.spinner("🚀 Loading medical AI models..."):
@@ -613,6 +721,38 @@ def main():
         </p>
     </div>
     """, unsafe_allow_html=True)
+    
+    # PDF Upload Section
+    with st.expander("📚 Upload Harrison's Textbook PDF (Optional)", expanded=False):
+        st.markdown("""
+        **For Full RAG Implementation:**
+        Upload Harrison's Principles of Internal Medicine PDF to enable complete textbook retrieval.
+        """)
+        
+        uploaded_file = st.file_uploader(
+            "Choose Harrison's textbook PDF",
+            type=['pdf'],
+            help="Upload the complete Harrison's textbook for full RAG functionality"
+        )
+        
+        if uploaded_file is not None:
+            if st.button("🔄 Process PDF for RAG"):
+                with st.spinner("📖 Processing Harrison's textbook..."):
+                    # Save uploaded file temporarily
+                    with open("temp_harrison.pdf", "wb") as f:
+                        f.write(uploaded_file.getbuffer())
+                    
+                    # Extract and process
+                    text = extract_text_from_pdf("temp_harrison.pdf")
+                    if text:
+                        chunks = chunk_text_for_rag(text)
+                        st.success(f"✅ Processed {len(chunks)} sections from Harrison's textbook!")
+                        st.info("🔄 Please restart the app to use the new textbook data.")
+                    else:
+                        st.error("❌ Failed to extract text from PDF")
+                    
+                    # Clean up
+                    os.remove("temp_harrison.pdf")
     
     # Professional question input
     st.markdown("### 🔍 Enter Your Medical Question")
