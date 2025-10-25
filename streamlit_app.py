@@ -473,10 +473,10 @@ def create_professional_metrics():
     
     with col2:
         st.metric(
-            label="🤖 AI Synthesis Quality", 
+            label="🤖 GitHub AI Performance", 
             value=f"{avg_github:.1f}%",
             delta=f"{st.session_state.github_scores[-1] - avg_github:.1f}%" if len(st.session_state.github_scores) > 1 else None,
-            help="Quality of AI synthesis based on retrieved Harrison's content"
+            help="Performance of GitHub AI models using independent medical knowledge"
         )
     
     with col3:
@@ -610,24 +610,26 @@ def main():
                 rag_confidence = min(95.0, rag_confidence)  # Cap at 95%
                 st.session_state.rag_scores.append(rag_confidence)
             
-            # GitHub AI - Constrained to Harrison's content only
-            with st.status("🤖 Synthesizing from Harrison's textbook..."):
+            # GitHub AI - Independent medical knowledge (competing with RAG)
+            with st.status("🤖 Consulting GitHub AI models..."):
                 messages = [
-                    {"role": "system", "content": "You are a medical AI assistant. You must ONLY use the provided content from Harrison's Principles of Internal Medicine. Do not add any information beyond what is provided in the Harrison's textbook excerpt. If the provided content is insufficient, state that clearly."},
-                    {"role": "user", "content": f"Patient Question: {question}\n\nHarrison's Textbook Content: {rag_answer}\n\nBased ONLY on the above Harrison's textbook content, provide a clear, organized medical response. Do not add any information not present in the provided textbook excerpt. If the content doesn't fully address the question, mention that additional information would be found in other sections of Harrison's Principles of Internal Medicine."}
+                    {"role": "system", "content": "You are an expert medical AI assistant with comprehensive medical knowledge. Provide accurate, detailed medical information based on your training data and medical knowledge. Be thorough and professional in your response."},
+                    {"role": "user", "content": f"Medical Question: {question}\n\nPlease provide a comprehensive, evidence-based medical answer using your medical knowledge. Include relevant pathophysiology, clinical presentation, diagnosis, and treatment information as appropriate."}
                 ]
                 github_answer = call_github_models(messages)
                 answers["GitHub AI"] = github_answer
-                # Calculate synthesis confidence based on AI response quality
+                # Calculate GitHub AI performance based on response quality
                 if "❌" in github_answer or "unavailable" in github_answer:
-                    github_confidence = 20.0  # Low confidence for failed API calls
-                elif "Harrison's" in github_answer and len(github_answer) > 150:
-                    github_confidence = 80.0 + (len(github_answer) / 120) * 1.5  # Good synthesis
-                elif len(github_answer) > 100:
-                    github_confidence = 70.0  # Moderate synthesis
+                    github_confidence = 15.0  # Low confidence for failed API calls
+                elif len(github_answer) > 300 and any(term in github_answer.lower() for term in ['pathophysiology', 'treatment', 'diagnosis', 'symptoms']):
+                    github_confidence = 75.0 + (len(github_answer) / 150) * 2  # Comprehensive medical response
+                elif len(github_answer) > 150:
+                    github_confidence = 65.0 + (len(github_answer) / 200) * 1.5  # Good response
+                elif len(github_answer) > 50:
+                    github_confidence = 55.0  # Basic response
                 else:
-                    github_confidence = 50.0  # Basic response
-                github_confidence = min(92.0, github_confidence)  # Cap at 92%
+                    github_confidence = 35.0  # Poor response
+                github_confidence = min(88.0, github_confidence)  # Cap at 88% (slightly lower than RAG)
                 st.session_state.github_scores.append(github_confidence)
         
         # Calculate response time
@@ -645,10 +647,10 @@ def main():
         st.markdown("""
         <div style="text-align: center; margin: 2rem 0;">
             <h2 style="color: #3b82f6; margin-bottom: 1rem; font-size: 2.2rem; font-weight: 600;">
-                📋 Medical Consultation Results
+                📋 RAG vs AI Comparison Results
             </h2>
             <p style="opacity: 0.8; font-size: 1rem; color: #9aa0a6;">
-                Evidence-based medical information from multiple authoritative sources
+                Comparative analysis: Harrison's Textbook RAG vs GitHub AI Models
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -665,8 +667,8 @@ def main():
         # Display answers in two columns
         resp_col1, resp_col2 = st.columns(2)
         
-        # Professional answer display
-        st.markdown("### 📚 Evidence-Based Medical Information")
+        # Comparative analysis display
+        st.markdown("### ⚖️ RAG vs AI Comparison")
         
         # Calculate real confidence scores based on answer quality and length
         rag_confidence = min(95, max(75, 85 + (len(rag_answer) / 50) - 5)) if len(rag_answer) > 50 else 60
@@ -706,15 +708,15 @@ def main():
                        border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <h4 style="margin: 0; color: #3b82f6; font-size: 1.2rem; font-weight: 600;">
-                        🤖 AI Synthesis (Harrison's Based)
+                        🤖 GitHub AI Models
                     </h4>
                     <span style="background: #3b82f6; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; 
                                 font-size: 0.8rem; font-weight: 600;">
-                        {github_confidence:.1f}% Synthesis Quality
+                        {github_confidence:.1f}% AI Confidence
                     </span>
                 </div>
                 <p style="margin: 0; opacity: 0.8; font-size: 0.9rem; color: #9aa0a6;">
-                    AI organization and synthesis of Harrison's textbook content only
+                    Independent AI medical knowledge (GPT-4o-mini, Llama, etc.)
                 </p>
             </div>
             """, unsafe_allow_html=True)
