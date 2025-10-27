@@ -24,32 +24,56 @@
 
 MedBot implements a dual-pathway medical AI system combining **Retrieval-Augmented Generation (RAG)** with **Large Language Models** for comprehensive medical question answering.
 
-```mermaid
-graph TD
-    A[👤 User Query] --> B{🔍 Query Processing}
-    B --> C[📚 RAG System]
-    B --> D[🤖 GitHub AI Models]
+```
+                           🏥 MedBot Architecture Flow
     
-    C --> E[📖 Harrison's Textbook]
-    C --> F[🧠 Sentence Transformers]
-    C --> G[🗄️ ChromaDB Vector Store]
-    
-    D --> H[💬 GPT-4o-mini]
-    D --> I[🦙 Llama 405B]
-    D --> J[🔬 DeepSeek R1]
-    
-    E --> K[📊 Semantic Search]
-    F --> K
-    G --> K
-    
-    K --> L[⚖️ Response Comparison]
-    H --> L
-    I --> L
-    J --> L
-    
-    L --> M[📈 Confidence Scoring]
-    M --> N[✨ Final Response]
-    N --> O[👨‍⚕️ Medical Professional UI]
+    👤 User Query
+         │
+         ▼
+    ┌─────────────────┐
+    │  🔍 Query       │
+    │  Processing     │
+    └─────────────────┘
+         │
+         ├─────────────────────────────────────┬─────────────────────────────────────┐
+         ▼                                     ▼                                     ▼
+    ┌─────────────┐                      ┌─────────────┐                      ┌─────────────┐
+    │ 📚 RAG      │                      │ 🤖 GitHub   │                      │ 📊 Semantic │
+    │ System      │                      │ AI Models   │                      │ Analysis    │
+    └─────────────┘                      └─────────────┘                      └─────────────┘
+         │                                     │                                     │
+         ▼                                     ▼                                     ▼
+    ┌─────────────┐                      ┌─────────────┐                      ┌─────────────┐
+    │📖 Harrison's│                      │💬 GPT-4o    │                      │🧠 Sentence  │
+    │  Textbook   │                      │🦙 Llama 405B│                      │Transformers │
+    │🗄️ ChromaDB  │                      │🔬 DeepSeek  │                      │⚡ Vector    │
+    └─────────────┘                      └─────────────┘                      └─────────────┘
+         │                                     │                                     │
+         └─────────────────┬───────────────────┘                                     │
+                           ▼                                                         │
+                      ┌─────────────┐                                               │
+                      │ ⚖️ Response │◄──────────────────────────────────────────────┘
+                      │ Comparison  │
+                      └─────────────┘
+                           │
+                           ▼
+                      ┌─────────────┐
+                      │ 📈 Confidence│
+                      │ Scoring     │
+                      └─────────────┘
+                           │
+                           ▼
+                      ┌─────────────┐
+                      │ ✨ Final    │
+                      │ Response    │
+                      └─────────────┘
+                           │
+                           ▼
+                      ┌─────────────┐
+                      │👨‍⚕️ Medical  │
+                      │Professional │
+                      │    UI       │
+                      └─────────────┘
 ```
 
 ### **🔬 Core Components**
@@ -60,6 +84,70 @@ graph TD
 | **LLM Integration** | GitHub AI Models API | Contextual response generation | 77.0% accuracy |
 | **Evaluation Framework** | Semantic Similarity Analysis | Performance benchmarking | 90.1% combined |
 | **UI/UX** | Streamlit + Custom CSS | Professional medical interface | Real-time analytics |
+
+### **⚡ Processing Pipeline**
+
+```
+                    🔬 Medical AI Processing Flow
+    
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                          INPUT LAYER                                        │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+                            📝 "What causes diabetes?"
+                                      │
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                       PROCESSING LAYER                                      │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    ▼                 ▼                 ▼
+            ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+            │  📚 RAG Path  │ │ 🤖 LLM Path   │ │ 📊 Analytics  │
+            │               │ │               │ │               │
+            │ Harrison's    │ │ GitHub AI     │ │ Confidence    │
+            │ Textbook      │ │ Models        │ │ Scoring       │
+            │               │ │               │ │               │
+            │ 🗄️ ChromaDB   │ │ 💬 GPT-4o     │ │ 📈 Metrics    │
+            │ 🧠 Semantic   │ │ 🦙 Llama      │ │ ⚖️ Comparison │
+            │ 🔍 Search     │ │ 🔬 DeepSeek   │ │ 🎯 Validation │
+            └───────────────┘ └───────────────┘ └───────────────┘
+                    │                 │                 │
+                    └─────────────────┼─────────────────┘
+                                      ▼
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                        FUSION LAYER                                         │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                              ⚖️ Response Fusion
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    ▼                 ▼                 ▼
+            ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+            │ 📖 Medical    │ │ 🎯 Contextual │ │ 📊 Performance│
+            │ Accuracy      │ │ Understanding │ │ Metrics       │
+            │               │ │               │ │               │
+            │ 83.9% RAG     │ │ 77.0% LLM     │ │ 85.2% Combined│
+            │ Harrison's    │ │ Conversational│ │ Real-time     │
+            │ Citations     │ │ Context       │ │ Analytics     │
+            └───────────────┘ └───────────────┘ └───────────────┘
+                    │                 │                 │
+                    └─────────────────┼─────────────────┘
+                                      ▼
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                        OUTPUT LAYER                                         │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+                        ✨ Optimized Medical Response
+                                      │
+                    "Diabetes is caused by insufficient insulin
+                     production or insulin resistance..."
+                                      │
+                                      ▼
+                        👨‍⚕️ Professional Medical Interface
+```
 
 ---
 
@@ -127,6 +215,73 @@ streamlit run streamlit_app.py
 │ GitHub AI       │  77.0%   │    1.8s      │    82.3%    │
 │ Combined System │  85.2%   │    1.5s      │    90.1%    │
 └─────────────────┴──────────┴──────────────┴─────────────┘
+```
+
+### **🔍 RAG System Deep Dive**
+
+```
+                        📚 Retrieval-Augmented Generation Flow
+    
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                    📖 KNOWLEDGE BASE PREPARATION                            │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    ▼                 ▼                 ▼
+            ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+            │ 📄 Harrison's │ │ 🔪 Text       │ │ 🧠 Embedding  │
+            │ 21st Edition  │ │ Chunking      │ │ Generation    │
+            │               │ │               │ │               │
+            │ 4,000+ pages  │ │ Semantic      │ │ Sentence      │
+            │ Medical Text  │ │ Segmentation  │ │ Transformers  │
+            │ Authoritative │ │ Context       │ │ Vector        │
+            │ Source        │ │ Preservation  │ │ Encoding      │
+            └───────────────┘ └───────────────┘ └───────────────┘
+                    │                 │                 │
+                    └─────────────────┼─────────────────┘
+                                      ▼
+                              🗄️ ChromaDB Vector Store
+                                      │
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                      🔍 QUERY PROCESSING                                    │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                            📝 User Medical Query
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    ▼                 ▼                 ▼
+            ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+            │ 🔤 Query      │ │ 🧠 Query      │ │ 🎯 Similarity │
+            │ Preprocessing │ │ Embedding     │ │ Search        │
+            │               │ │               │ │               │
+            │ Tokenization  │ │ Same Model    │ │ Cosine        │
+            │ Normalization │ │ as Knowledge  │ │ Similarity    │
+            │ Medical Terms │ │ Base          │ │ Top-K Results │
+            │ Expansion     │ │ Consistency   │ │ Relevance     │
+            └───────────────┘ └───────────────┘ └───────────────┘
+                    │                 │                 │
+                    └─────────────────┼─────────────────┘
+                                      ▼
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                    📊 RETRIEVAL & RANKING                                   │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    ▼                 ▼                 ▼
+            ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+            │ 🎯 Top-5      │ │ 📈 Confidence │ │ 📖 Context    │
+            │ Relevant      │ │ Scoring       │ │ Assembly      │
+            │ Passages      │ │               │ │               │
+            │ Medical       │ │ Similarity    │ │ Coherent      │
+            │ Context       │ │ Threshold     │ │ Medical       │
+            │ Harrison's    │ │ Quality       │ │ Knowledge     │
+            │ Citations     │ │ Assurance     │ │ Response      │
+            └───────────────┘ └───────────────┘ └───────────────┘
+                    │                 │                 │
+                    └─────────────────┼─────────────────┘
+                                      ▼
+                        ✨ 83.9% Accurate Medical Response
+                           with Source Attribution
 ```
 
 **Key Insights:**
